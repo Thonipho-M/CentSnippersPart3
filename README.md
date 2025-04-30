@@ -1,49 +1,108 @@
-# Braydon Wooley – Online CV (ASP.NET Core MVC)
 
-This is my professional online CV built with ASP.NET Core MVC and deployed using Render's free hosting tier.
 
-The site is fully responsive, mobile-friendly, and ATS-compliant – designed to showcase my real-world experience in web development, digital marketing, and application development.
+Cent Snippers is a personal budgeting Android app designed to help users manage their finances by tracking budgets and goals. It supports user registration and login, allowing users to continue where they left off using a local SQLite database.
 
----
+## How to Run the App
 
-## 🧠 About Me
+This guide walks you through setting up and running the app on either a physical Android device or an emulator.
 
-I'm currently in my final year of a **Bachelor of Application Development** at Varsity College (South Africa). While studying, I've built and grown a **fully operational digital marketing and web development business**, delivering real results to real clients.
+### 1. Prerequisites
 
-My work includes:
-- Full website builds (WordPress and custom-coded)
-- SEO & Google Ads campaigns
-- Social media content creation
-- Application prototypes and cloud-based tools
+- Android Studio installed (latest stable version)
+- Android device or emulator with at least API level 30
 
-Clients include:  
-Suede Wellness, TM Waterproofing, The Great Train Race, Art of Bridal, and more.
+### 2. Clone the Repository
 
----
+Run the following in your terminal:
 
-🚀 Technologies Used
+git clone https://github.com/VCSTDN2024/prog7313-part2-centsnippers1.git
 
-- ASP.NET Core MVC (.NET 8)
-- Razor Views
-- HTML5 / CSS3 / Bootstrap
-- JavaScript
-- Entity Framework Core
-- Render for deployment
 
----
+### 3. Open the Project in Android Studio
 
-🌐 Live Website
+- Open Android Studio
+- Click File > Open
+- Navigate to the folder that contains `build.gradle` and open it
+- Let Gradle sync and the project index
 
-> Deployed using Render Free Web Service  
+### 4. Run the App
 
----
+#### Option 1: Using a Physical Device
 
-## Temaplte Used from Bootstrap
+- Connect your phone via USB
+- Enable Developer Options and USB Debugging
+- Select your device in the target list
+- Press Run
 
-https://startbootstrap.com/templates
+#### Option 2: Using an Emulator
 
----
+- Create a virtual device (Pixel 4, API 30 or similar)
+- Use an image without Google Play if on a lower-end PC
+- Launch the emulator and press Run
 
-## 📬 Contact
+### 5. Use the App
 
-Phone: 0820807969
+- Register a new account
+- Add budgets and goals
+- Exit and re-open the app to verify data persists
+
+
+Features Implemented
+
+
+  - Users can create accounts.
+  - Login persists via a session manager.
+  - Budgets and user information are stored locally using SQLite.
+  - Each user has their own budgets and data.
+  - Users can add budgets with a category and amount.
+  - Bottom navigation bar allows users to switch between Dashboard, Budgets, and Goals.
+
+
+Tech Stack
+
+| Tool           | Purpose                              |
+|----------------|--------------------------------------|
+| Android Studio | IDE for development                  |
+| Kotlin         | Programming language                 |
+| XML            | UI layout files                      |
+| SQLite         | Local database storage               |
+| ViewBinding    | Access layout views safely           |
+| RecyclerView   | Displaying lists (budgets, goals)    |
+
+
+Project Structure (Simplified)
+
+
+com.centsnippers/
+│
+├── fragments/
+│   ├── LoginFragment.kt
+│   ├── RegisterFragment.kt
+│   ├── BudgetFragment.kt
+│   ├── GoalsFragment.kt
+│   └── DashboardFragment.kt
+│
+├── adapters/
+│   ├── BudgetAdapter.kt
+│   └── GoalsAdapter.kt
+│
+├── models/
+│   ├── BudgetItem.kt
+│   └── GoalItem.kt
+│
+├── database/
+│   └── DatabaseHelper.kt
+│
+├── utils/
+│   └── SessionManager.kt
+│
+└── res/
+    ├── layout/
+    ├── drawable/
+    └── values/
+```
+
+
+Author
+
+Built by Thonipho Mavhungu & Braydon Wooley
