@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/loginFragment">
+
+    <fragment
+        android:id="@+id/analyticsFragment"
+        android:name="com.centsnippers.fragments.AnalyticsFragment"
+        android:label="fragment_analytics"
+        tools:layout="@layout/fragment_analytics" />
+    <fragment
+        android:id="@+id/budgetFragment"
+        android:name="com.centsnippers.fragments.BudgetFragment"
+        android:label="fragment_budget"
+        tools:layout="@layout/fragment_budget" >
+        <action
+            android:id="@+id/action_budgetFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/dashboardFragment"
+        android:name="com.centsnippers.fragments.DashboardFragment"
+        android:label="fragment_dashboard"
+        tools:layout="@layout/fragment_dashboard" >
+        <action
+            android:id="@+id/action_dashboardFragment_to_budgetFragment"
+            app:destination="@id/budgetFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/goalsFragment"
+        android:name="com.centsnippers.fragments.GoalsFragment"
+        android:label="fragment_goals"
+        tools:layout="@layout/fragment_goals" />
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.centsnippers.fragments.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login">
+        <action
+            android:id="@+id/action_loginFragment_to_dashboardFragment"
+            app:destination="@id/dashboardFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_registerFragment"
+            app:destination="@id/registerFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/rewardsFragment"
+        android:name="com.centsnippers.fragments.RewardsFragment"
+        android:label="fragment_rewards"
+        tools:layout="@layout/fragment_rewards" />
+    <fragment
+        android:id="@+id/transactionFragment"
+        android:name="com.centsnippers.fragments.TransactionFragment"
+        android:label="fragment_transaction"
+        tools:layout="@layout/fragment_transaction" />
+    <fragment
+        android:id="@+id/registerFragment"
+        android:name="com.centsnippers.fragments.RegisterFragment"
+        android:label="RegisterFragment">
+        <action
+            android:id="@+id/action_registerFragment_to_loginFragment2"
+            app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_registerFragment_to_dashboardFragment"
+            app:destination="@id/dashboardFragment" />
+    </fragment>
+
+</navigation>

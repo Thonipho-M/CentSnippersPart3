@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dashboardScroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/totalIncomeText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Total Income: R0"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/totalExpensesText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Total Expenses: R0"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/remainingBudgetText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Remaining Budget: R0"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/overspendingText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Overspending: None"
+            android:textColor="@android:color/holo_red_dark"
+            android:layout_marginTop="12dp" />
+
+    </LinearLayout>
+</ScrollView>

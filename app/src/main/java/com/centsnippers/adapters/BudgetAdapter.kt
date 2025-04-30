@@ -1,0 +1,50 @@
+package com.centsnippers.adapters
+
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageButton
+import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import com.centsnippers.R
+import com.centsnippers.models.BudgetItem
+
+class BudgetAdapter(
+    private var budgetList: MutableList<BudgetItem>,  // Now mutable
+    private val onEdit: (Int) -> Unit,
+    private val onDelete: (Int) -> Unit
+) : RecyclerView.Adapter<BudgetAdapter.BudgetViewHolder>() {
+
+    inner class BudgetViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val txtBudgetInfo: TextView = view.findViewById(R.id.txtBudgetInfo)
+        val btnEdit: ImageButton = view.findViewById(R.id.btnEdit)
+        val btnDelete: ImageButton = view.findViewById(R.id.btnDelete)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BudgetViewHolder {
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_budget, parent, false)
+        return BudgetViewHolder(view)
+    }
+
+    override fun onBindViewHolder(holder: BudgetViewHolder, position: Int) {
+        val item = budgetList[position]
+        holder.txtBudgetInfo.text = "${item.category}: R${item.amount}"
+
+        holder.btnEdit.setOnClickListener {
+            onEdit(position)
+        }
+
+        holder.btnDelete.setOnClickListener {
+            onDelete(position)
+        }
+    }
+
+    override fun getItemCount(): Int = budgetList.size
+
+    // This function allows the list to be updated and the view refreshed
+    fun updateList(newList: List<BudgetItem>) {
+        budgetList.clear()
+        budgetList.addAll(newList)
+        notifyDataSetChanged()
+    }
+}
