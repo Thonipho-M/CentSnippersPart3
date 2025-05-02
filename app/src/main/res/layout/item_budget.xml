@@ -26,11 +26,11 @@
             android:textColor="@android:color/black" />
 
         <ImageButton
-            android:id="@+id/btnEdit"
+            android:id="@+id/btnPhoto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@android:drawable/ic_menu_edit"
-            android:contentDescription="@string/edit"
+            android:contentDescription="@string/photo"
             android:background="?attr/selectableItemBackgroundBorderless" />
 
         <ImageButton

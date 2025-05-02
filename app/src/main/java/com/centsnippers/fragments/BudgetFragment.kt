@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.centsnippers.adapters.BudgetAdapter
@@ -27,6 +28,15 @@ class BudgetFragment : Fragment() {
     private lateinit var sessionManager: SessionManager
     private lateinit var budgetAdapter: BudgetAdapter
     private var userId: Int = -1
+    private val galleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) {
+        val galleryUri = it
+        try{
+            binding.image.setImageURI(galleryUri)
+        }catch(e:Exception){
+            e.printStackTrace()
+        }
+
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,7 +62,7 @@ class BudgetFragment : Fragment() {
 
         // Setup RecyclerView for budget list
         budgetAdapter = BudgetAdapter(mutableListOf(),
-            onEdit = { position -> editBudgetItem(position) },
+            onPhoto = { position -> addPhoto(position) },
             onDelete = { position -> deleteBudgetItem(position) }
         )
         binding.budgetRecyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -110,11 +120,6 @@ class BudgetFragment : Fragment() {
             .show()
     }
 
-    // Edit functionality placeholder
-    private fun editBudgetItem(position: Int) {
-        Toast.makeText(requireContext(), "Edit not implemented yet", Toast.LENGTH_SHORT).show()
-    }
-
     // Deletes a budget item and refreshes list
     private fun deleteBudgetItem(position: Int) {
         val budgetList = dbHelper.getBudgetsForUser(userId)
@@ -125,8 +130,17 @@ class BudgetFragment : Fragment() {
         }
     }
 
+    // adds a photo
+     private fun addPhoto (position: Int){
+
+            galleryLauncher.launch("image/*")
+        }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
+
 }
+
+

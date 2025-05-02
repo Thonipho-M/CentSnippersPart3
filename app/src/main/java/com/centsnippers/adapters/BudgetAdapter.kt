@@ -1,23 +1,30 @@
 package com.centsnippers.adapters
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.RecyclerView
 import com.centsnippers.R
 import com.centsnippers.models.BudgetItem
+import com.centsnippers.fragments.BudgetFragment
+
 
 class BudgetAdapter(
+
+
     private var budgetList: MutableList<BudgetItem>,  // Now mutable
-    private val onEdit: (Int) -> Unit,
-    private val onDelete: (Int) -> Unit
+    private val onDelete: (Int) -> Unit,
+    private val onPhoto: (Int) -> Unit
+
 ) : RecyclerView.Adapter<BudgetAdapter.BudgetViewHolder>() {
 
     inner class BudgetViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val txtBudgetInfo: TextView = view.findViewById(R.id.txtBudgetInfo)
-        val btnEdit: ImageButton = view.findViewById(R.id.btnEdit)
+        val btnPhoto: ImageButton = view.findViewById(R.id.btnPhoto)
         val btnDelete: ImageButton = view.findViewById(R.id.btnDelete)
     }
 
@@ -31,8 +38,9 @@ class BudgetAdapter(
         val item = budgetList[position]
         holder.txtBudgetInfo.text = "${item.description}: R${item.amount}"
 
-        holder.btnEdit.setOnClickListener {
-            onEdit(position)
+
+        holder.btnPhoto.setOnClickListener {
+            onPhoto(position)
         }
 
         holder.btnDelete.setOnClickListener {
@@ -49,3 +57,4 @@ class BudgetAdapter(
         notifyDataSetChanged()
     }
 }
+
