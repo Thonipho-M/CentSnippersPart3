@@ -100,8 +100,11 @@ class BudgetFragment : Fragment() {
         val editCategory = dialogView.findViewById<EditText>(R.id.editCategory)
         val editAmount = dialogView.findViewById<EditText>(R.id.editAmount)
         val editDescription = dialogView.findViewById<EditText>(R.id.editDescription)
-        val buttonSelectImage = dialogView.findViewById<Button>(R.id.buttonSelectImage)
-        dialogImageView = dialogView.findViewById(R.id.selectedImageView)
+        val selectImageButton = dialogView.findViewById<Button>(R.id.selectImageButton)
+        selectImageButton.setOnClickListener {
+            imagePickerLauncher.launch("image/*")
+        }
+
 
 
         AlertDialog.Builder(requireContext())
