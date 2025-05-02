@@ -27,6 +27,8 @@ class DatabaseHelper(context: Context) :
         private const val COL_BUDGET_CATEGORY = "category"
         private const val COL_BUDGET_AMOUNT = "amount"
         private const val COL_BUDGET_DESCRIPTION = "description"
+        private const val COL_BUDGET_IMAGEURL = "imageUrl"
+
     }
 
     override fun onCreate(db: SQLiteDatabase) {
@@ -45,12 +47,14 @@ class DatabaseHelper(context: Context) :
             category TEXT,
             amount REAL,
             description TEXT,
+            imageUrl TEXT,
             FOREIGN KEY (userId) REFERENCES users(id)
         );
     """.trimIndent()
 
         db.execSQL(createUsersTable)
         db.execSQL(createBudgetsTable)
+
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
@@ -114,6 +118,7 @@ class DatabaseHelper(context: Context) :
             put(COL_BUDGET_CATEGORY, budgetItem.category)
             put(COL_BUDGET_AMOUNT, budgetItem.amount)
             put(COL_BUDGET_DESCRIPTION, budgetItem.description)
+            put(COL_BUDGET_IMAGEURL, budgetItem.imageUrl)
         }
         return db.insert(TABLE_BUDGETS, null, values) > 0
     }
@@ -124,6 +129,7 @@ class DatabaseHelper(context: Context) :
         val query = "SELECT * FROM $TABLE_BUDGETS WHERE $COL_BUDGET_USER_ID=?"
         val cursor = db.rawQuery(query, arrayOf(userId.toString()))
 
+
         if (cursor.moveToFirst()) {
             do {
                 val budget = BudgetItem(
@@ -131,7 +137,8 @@ class DatabaseHelper(context: Context) :
                     userId = cursor.getInt(cursor.getColumnIndexOrThrow(COL_BUDGET_USER_ID)),
                     category = cursor.getString(cursor.getColumnIndexOrThrow(COL_BUDGET_CATEGORY)),
                     amount = cursor.getDouble(cursor.getColumnIndexOrThrow(COL_BUDGET_AMOUNT)),
-                    description = cursor.getString(cursor.getColumnIndexOrThrow(COL_BUDGET_DESCRIPTION))
+                    description = cursor.getString(cursor.getColumnIndexOrThrow(COL_BUDGET_DESCRIPTION)),
+                    imageUrl = cursor.getString(cursor.getColumnIndexOrThrow("imageUri"))
                 )
                 list.add(budget)
             } while (cursor.moveToNext())

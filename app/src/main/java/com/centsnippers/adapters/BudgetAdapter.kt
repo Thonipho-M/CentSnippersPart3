@@ -1,31 +1,34 @@
 package com.centsnippers.adapters
 
+import android.net.Uri
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.recyclerview.widget.RecyclerView
 import com.centsnippers.R
 import com.centsnippers.models.BudgetItem
 import com.centsnippers.fragments.BudgetFragment
+import androidx.core.net.toUri
 
 
 class BudgetAdapter(
 
 
-    private var budgetList: MutableList<BudgetItem>,  // Now mutable
+    private var budgetList: MutableList<BudgetItem>,
     private val onDelete: (Int) -> Unit,
-    private val onPhoto: (Int) -> Unit
+
 
 ) : RecyclerView.Adapter<BudgetAdapter.BudgetViewHolder>() {
 
     inner class BudgetViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val txtBudgetInfo: TextView = view.findViewById(R.id.txtBudgetInfo)
-        val btnPhoto: ImageButton = view.findViewById(R.id.btnPhoto)
         val btnDelete: ImageButton = view.findViewById(R.id.btnDelete)
+        val imagePreview: ImageView = view.findViewById(R.id.imagePreview)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BudgetViewHolder {
@@ -38,11 +41,13 @@ class BudgetAdapter(
         val item = budgetList[position]
         holder.txtBudgetInfo.text = "${item.description}: R${item.amount}"
 
-
-        holder.btnPhoto.setOnClickListener {
-            onPhoto(position)
+        // Show image if URI is available
+        if (!item.imageUrl.isNullOrEmpty()) {
+            holder.imagePreview.setImageURI(item.imageUrl.toUri())
+            holder.imagePreview.visibility = View.VISIBLE
+        } else {
+            holder.imagePreview.visibility = View.GONE
         }
-
         holder.btnDelete.setOnClickListener {
             onDelete(position)
         }

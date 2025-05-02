@@ -2,11 +2,14 @@ package com.centsnippers.fragments
 
 import android.app.AlertDialog
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
@@ -28,15 +31,14 @@ class BudgetFragment : Fragment() {
     private lateinit var sessionManager: SessionManager
     private lateinit var budgetAdapter: BudgetAdapter
     private var userId: Int = -1
-    private val galleryLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) {
-        val galleryUri = it
-        try{
-            binding.image.setImageURI(galleryUri)
-        }catch(e:Exception){
-            e.printStackTrace()
-        }
-
+    private var selectedImageUri: Uri? = null
+    private val imagePickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        selectedImageUri = uri
+        dialogImageView?.setImageURI(uri)
+        dialogImageView?.visibility = View.VISIBLE
     }
+    private var dialogImageView: ImageView? = null
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -62,7 +64,6 @@ class BudgetFragment : Fragment() {
 
         // Setup RecyclerView for budget list
         budgetAdapter = BudgetAdapter(mutableListOf(),
-            onPhoto = { position -> addPhoto(position) },
             onDelete = { position -> deleteBudgetItem(position) }
         )
         binding.budgetRecyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -99,6 +100,9 @@ class BudgetFragment : Fragment() {
         val editCategory = dialogView.findViewById<EditText>(R.id.editCategory)
         val editAmount = dialogView.findViewById<EditText>(R.id.editAmount)
         val editDescription = dialogView.findViewById<EditText>(R.id.editDescription)
+        val buttonSelectImage = dialogView.findViewById<Button>(R.id.buttonSelectImage)
+        dialogImageView = dialogView.findViewById(R.id.selectedImageView)
+
 
         AlertDialog.Builder(requireContext())
             .setTitle("Add Budget")
@@ -107,11 +111,13 @@ class BudgetFragment : Fragment() {
                 val category = editCategory.text.toString().trim()
                 val amount = editAmount.text.toString().trim().toDoubleOrNull()
                 val description = editDescription.text.toString().trim()
+                val imageUrl=selectedImageUri?.toString()
 
                 if (category.isNotEmpty() && amount != null) {
-                    val budgetItem = BudgetItem(0, userId, category, amount, description)
+                    val budgetItem = BudgetItem(0, userId, category, amount, description, imageUrl)
                     dbHelper.insertBudget(budgetItem)
                     loadBudgets()
+                    selectedImageUri = null
                 } else {
                     Toast.makeText(requireContext(), "Invalid input", Toast.LENGTH_SHORT).show()
                 }
@@ -130,11 +136,6 @@ class BudgetFragment : Fragment() {
         }
     }
 
-    // adds a photo
-     private fun addPhoto (position: Int){
-
-            galleryLauncher.launch("image/*")
-        }
 
     override fun onDestroyView() {
         super.onDestroyView()

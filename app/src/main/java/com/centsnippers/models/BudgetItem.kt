@@ -6,4 +6,5 @@ data class BudgetItem(
     val category: String,
     val amount: Double,
     val description : String,
+    val imageUrl: String? = null
 )

@@ -27,4 +27,18 @@
         android:inputType="numberDecimal"
         android:layout_marginTop="16dp" />
 
+    <Button
+        android:id="@+id/buttonSelectImage"
+        android:text="Select Image"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <ImageView
+        android:id="@+id/selectedImageView"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:scaleType="centerCrop"
+        android:visibility="gone"
+        android:layout_marginTop="8dp"/>
+
 </LinearLayout>
