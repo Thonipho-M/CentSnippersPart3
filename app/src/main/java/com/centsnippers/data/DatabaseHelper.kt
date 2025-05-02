@@ -26,6 +26,7 @@ class DatabaseHelper(context: Context) :
         private const val COL_BUDGET_USER_ID = "userId"
         private const val COL_BUDGET_CATEGORY = "category"
         private const val COL_BUDGET_AMOUNT = "amount"
+        private const val COL_BUDGET_DESCRIPTION = "description"
     }
 
     override fun onCreate(db: SQLiteDatabase) {
@@ -43,6 +44,7 @@ class DatabaseHelper(context: Context) :
             userId INTEGER,
             category TEXT,
             amount REAL,
+            description TEXT,
             FOREIGN KEY (userId) REFERENCES users(id)
         );
     """.trimIndent()
@@ -111,6 +113,7 @@ class DatabaseHelper(context: Context) :
             put(COL_BUDGET_USER_ID, budgetItem.userId)
             put(COL_BUDGET_CATEGORY, budgetItem.category)
             put(COL_BUDGET_AMOUNT, budgetItem.amount)
+            put(COL_BUDGET_DESCRIPTION, budgetItem.description)
         }
         return db.insert(TABLE_BUDGETS, null, values) > 0
     }
@@ -127,7 +130,8 @@ class DatabaseHelper(context: Context) :
                     id = cursor.getInt(cursor.getColumnIndexOrThrow(COL_BUDGET_ID)),
                     userId = cursor.getInt(cursor.getColumnIndexOrThrow(COL_BUDGET_USER_ID)),
                     category = cursor.getString(cursor.getColumnIndexOrThrow(COL_BUDGET_CATEGORY)),
-                    amount = cursor.getDouble(cursor.getColumnIndexOrThrow(COL_BUDGET_AMOUNT))
+                    amount = cursor.getDouble(cursor.getColumnIndexOrThrow(COL_BUDGET_AMOUNT)),
+                    description = cursor.getString(cursor.getColumnIndexOrThrow(COL_BUDGET_DESCRIPTION))
                 )
                 list.add(budget)
             } while (cursor.moveToNext())

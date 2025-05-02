@@ -27,8 +27,9 @@ class BudgetAdapter(
     }
 
     override fun onBindViewHolder(holder: BudgetViewHolder, position: Int) {
+    // this determines how the budget list will be presented
         val item = budgetList[position]
-        holder.txtBudgetInfo.text = "${item.category}: R${item.amount}"
+        holder.txtBudgetInfo.text = "${item.description}: R${item.amount}"
 
         holder.btnEdit.setOnClickListener {
             onEdit(position)

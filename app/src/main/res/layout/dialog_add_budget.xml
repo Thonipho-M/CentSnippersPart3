@@ -13,6 +13,13 @@
         android:inputType="textCapWords" />
 
     <EditText
+        android:id="@+id/editDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/description_hint"
+        android:inputType="textCapWords" />
+
+    <EditText
         android:id="@+id/editAmount"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -88,6 +88,7 @@ class BudgetFragment : Fragment() {
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add_budget, null)
         val editCategory = dialogView.findViewById<EditText>(R.id.editCategory)
         val editAmount = dialogView.findViewById<EditText>(R.id.editAmount)
+        val editDescription = dialogView.findViewById<EditText>(R.id.editDescription)
 
         AlertDialog.Builder(requireContext())
             .setTitle("Add Budget")
@@ -95,9 +96,10 @@ class BudgetFragment : Fragment() {
             .setPositiveButton("Save") { _, _ ->
                 val category = editCategory.text.toString().trim()
                 val amount = editAmount.text.toString().trim().toDoubleOrNull()
+                val description = editDescription.text.toString().trim()
 
                 if (category.isNotEmpty() && amount != null) {
-                    val budgetItem = BudgetItem(0, userId, category, amount)
+                    val budgetItem = BudgetItem(0, userId, category, amount, description)
                     dbHelper.insertBudget(budgetItem)
                     loadBudgets()
                 } else {

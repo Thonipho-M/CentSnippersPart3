@@ -5,4 +5,5 @@ data class BudgetItem(
     val userId: Int,
     val category: String,
     val amount: Double,
+    val description : String,
 )
