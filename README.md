@@ -1,5 +1,5 @@
 <!-- 🎥 Demo Video -->
-<!-- Insert a YouTube video link of the app running here -->
+<!-- https://youtu.be/cVHNUFpoiaM-->
 
 # Cent Snippers
 
