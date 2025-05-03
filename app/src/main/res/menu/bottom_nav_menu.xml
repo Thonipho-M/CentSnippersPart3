@@ -1,10 +1,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/budgetFragment"
-        android:title="Budget" />
+        android:id="@+id/categoryFragment"
+        android:title="Categories" />
     <item
-        android:id="@+id/goalsFragment"
-        android:title="goals" />
+        android:id="@+id/transactionFragment"
+        android:title="Transactions" />
     <item
         android:id="@+id/dashboardFragment"
         android:title="Dashboard" />

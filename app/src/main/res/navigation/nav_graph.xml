@@ -6,15 +6,22 @@
     app:startDestination="@id/loginFragment">
 
     <fragment
+        android:id="@+id/categoryFragment"
+        android:name="com.centsnippers.fragments.CategoryFragment"
+        android:label="Categories"
+        tools:layout="@layout/fragment_category" />
+
+
+    <fragment
         android:id="@+id/analyticsFragment"
         android:name="com.centsnippers.fragments.AnalyticsFragment"
         android:label="fragment_analytics"
         tools:layout="@layout/fragment_analytics" />
     <fragment
         android:id="@+id/budgetFragment"
-        android:name="com.centsnippers.fragments.BudgetFragment"
+        android:name="com.centsnippers.fragments.CategoryFragment"
         android:label="fragment_budget"
-        tools:layout="@layout/fragment_budget" >
+        tools:layout="@layout/fragment_category" >
         <action
             android:id="@+id/action_budgetFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
@@ -66,5 +73,10 @@
             android:id="@+id/action_registerFragment_to_dashboardFragment"
             app:destination="@id/dashboardFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/helpPage"
+        android:name="com.centsnippers.fragments.HelpFragment"
+        android:label="Help" />
+
 
 </navigation>

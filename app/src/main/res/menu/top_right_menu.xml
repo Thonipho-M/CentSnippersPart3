@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/goalsFragment"
+        android:title="Goals"/>
+    <item
+        android:id="@+id/rewardsFragment"
+        android:title="Rewards"/>
+    <item
+        android:id="@+id/helpPage"
+        android:title="Help"/>
+    <item
+        android:id="@+id/logoutButton"
+        android:title="Logout" />
+</menu>

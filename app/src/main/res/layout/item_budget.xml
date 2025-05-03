@@ -28,7 +28,7 @@
 
 
         <ImageView
-            android:id="@+id/imagePreview"
+            android:id="@+id/imagePreview1"
             android:layout_width="150dp"
             android:layout_height="130dp"
             android:layout_marginTop="8dp"
