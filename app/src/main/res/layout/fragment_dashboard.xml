@@ -3,46 +3,95 @@
     android:id="@+id/dashboardScroll"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/offWhite"
     android:padding="16dp">
 
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal">
 
+        <!-- Title -->
         <TextView
-            android:id="@+id/totalIncomeText"
-            android:layout_width="match_parent"
+            android:id="@+id/dashboardTitle"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Total Income: R0"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/totalExpensesText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Total Expenses: R0"
-            android:textSize="18sp"
+            android:text="Your Monthly Overview"
+            android:textSize="20sp"
             android:textStyle="bold"
-            android:layout_marginTop="8dp" />
+            android:textColor="@color/textPrimary"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp" />
 
-        <TextView
-            android:id="@+id/remainingBudgetText"
+        <!-- Logo -->
+        <ImageView
+            android:id="@+id/dashboardLogo"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/logo"
+            android:layout_marginBottom="24dp"
+            android:contentDescription="App Logo" />
+
+        <!-- Data Card -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/summaryCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Remaining Budget: R0"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginTop="8dp" />
+            android:layout_marginBottom="24dp"
+            android:padding="20dp">
 
-        <TextView
-            android:id="@+id/overspendingText"
-            android:layout_width="match_parent"
+            <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/totalIncomeText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Total Income: R0"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/textPrimary"
+                    android:layout_marginBottom="8dp" />
+
+                <TextView
+                    android:id="@+id/totalExpensesText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Total Expenses: R0"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/textPrimary"
+                    android:layout_marginBottom="8dp" />
+
+                <TextView
+                    android:id="@+id/remainingBudgetText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Remaining Budget: R0"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/textPrimary"
+                    android:layout_marginBottom="12dp" />
+
+                <TextView
+                    android:id="@+id/overspendingText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Overspending: None"
+                    android:textSize="16sp"
+                    android:textStyle="italic"
+                    android:textColor="@android:color/holo_red_dark" />
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+        <Button
+            android:id="@+id/logoutButton"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Overspending: None"
-            android:textColor="@android:color/holo_red_dark"
-            android:layout_marginTop="12dp" />
-
+            android:text="Logout"
+            android:layout_marginTop="16dp" />
     </LinearLayout>
 </ScrollView>

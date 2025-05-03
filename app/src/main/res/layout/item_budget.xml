@@ -11,43 +11,37 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center_vertical"
         android:orientation="horizontal"
         android:padding="16dp"
-        android:gravity="center_vertical"
         android:weightSum="1">
+
 
         <TextView
             android:id="@+id/txtBudgetInfo"
-            android:layout_width="0dp"
+            android:layout_width="209dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.7"
             android:text="Category: R0.00"
-            android:textSize="16sp"
-            android:textColor="@android:color/black" />
+            android:textColor="@android:color/black"
+            android:textSize="16sp" />
 
-        <ImageButton
-            android:id="@+id/btnPhoto"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_menu_edit"
-            android:contentDescription="@string/photo"
-            android:background="?attr/selectableItemBackgroundBorderless" />
-
-        <ImageButton
-            android:id="@+id/btnDelete"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@android:drawable/ic_menu_delete" 
-            android:contentDescription="@string/delete"
-            android:background="?attr/selectableItemBackgroundBorderless" />
 
         <ImageView
             android:id="@+id/imagePreview"
-            android:layout_width="match_parent"
-            android:layout_height="180dp"
-            android:scaleType="centerCrop"
+            android:layout_width="150dp"
+            android:layout_height="130dp"
             android:layout_marginTop="8dp"
-            android:visibility="gone"/>
+            android:scaleType="centerCrop" />
+
+
     </LinearLayout>
+    <ImageButton
+        android:id="@+id/btnDelete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/delete"
+        android:src="@android:drawable/ic_menu_delete" />
 </androidx.cardview.widget.CardView>
 

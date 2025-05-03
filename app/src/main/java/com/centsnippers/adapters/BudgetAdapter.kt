@@ -14,13 +14,15 @@ import com.centsnippers.R
 import com.centsnippers.models.BudgetItem
 import com.centsnippers.fragments.BudgetFragment
 import androidx.core.net.toUri
+import com.bumptech.glide.Glide
+
 
 
 class BudgetAdapter(
 
 
     private var budgetList: MutableList<BudgetItem>,
-    private val onDelete: (Int) -> Unit,
+    private val onDelete: (Int) -> Unit
 
 
 ) : RecyclerView.Adapter<BudgetAdapter.BudgetViewHolder>() {
@@ -37,21 +39,26 @@ class BudgetAdapter(
     }
 
     override fun onBindViewHolder(holder: BudgetViewHolder, position: Int) {
-    // this determines how the budget list will be presented
         val item = budgetList[position]
         holder.txtBudgetInfo.text = "${item.description}: R${item.amount}"
 
-        // Show image if URI is available
+        // Load image using Glide
         if (!item.imageUrl.isNullOrEmpty()) {
-            holder.imagePreview.setImageURI(item.imageUrl.toUri())
             holder.imagePreview.visibility = View.VISIBLE
+            Glide.with(holder.imagePreview.context)
+                .load(item.imageUrl)
+                .placeholder(android.R.drawable.ic_menu_gallery) // optional: show while loading
+                .error(android.R.drawable.ic_delete) // optional: show if loading fails
+                .into(holder.imagePreview)
         } else {
             holder.imagePreview.visibility = View.GONE
         }
+
         holder.btnDelete.setOnClickListener {
             onDelete(position)
         }
     }
+
 
     override fun getItemCount(): Int = budgetList.size
 

@@ -138,7 +138,7 @@ class DatabaseHelper(context: Context) :
                     category = cursor.getString(cursor.getColumnIndexOrThrow(COL_BUDGET_CATEGORY)),
                     amount = cursor.getDouble(cursor.getColumnIndexOrThrow(COL_BUDGET_AMOUNT)),
                     description = cursor.getString(cursor.getColumnIndexOrThrow(COL_BUDGET_DESCRIPTION)),
-                    imageUrl = cursor.getString(cursor.getColumnIndexOrThrow("imageUri"))
+                    imageUrl = cursor.getString(cursor.getColumnIndexOrThrow(COL_BUDGET_IMAGEURL))
                 )
                 list.add(budget)
             } while (cursor.moveToNext())

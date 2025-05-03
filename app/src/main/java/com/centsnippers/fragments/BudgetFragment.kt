@@ -1,3 +1,5 @@
+
+
 package com.centsnippers.fragments
 
 import android.app.AlertDialog
@@ -120,13 +122,14 @@ class BudgetFragment : Fragment() {
                     val budgetItem = BudgetItem(0, userId, category, amount, description, imageUrl)
                     dbHelper.insertBudget(budgetItem)
                     loadBudgets()
-                    selectedImageUri = null
+
                 } else {
                     Toast.makeText(requireContext(), "Invalid input", Toast.LENGTH_SHORT).show()
                 }
             }
             .setNegativeButton("Cancel", null)
             .show()
+        loadBudgets()
     }
 
     // Deletes a budget item and refreshes list
@@ -146,5 +149,3 @@ class BudgetFragment : Fragment() {
     }
 
 }
-
-

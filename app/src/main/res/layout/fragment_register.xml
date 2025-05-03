@@ -1,28 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="24dp">
+    android:background="@color/offWhite">
 
-    <EditText
-        android:id="@+id/usernameEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Choose a Username" />
 
-    <EditText
-        android:id="@+id/passwordEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Choose a Password"
-        android:inputType="textPassword" />
 
-    <Button
-        android:id="@+id/registerButton"
-        android:layout_width="match_parent"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/registerCard"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Register"
-        android:layout_marginTop="16dp"/>
-</LinearLayout>
+        android:layout_margin="32dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="6dp"
+        android:padding="24dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+            <TextView
+                android:id="@+id/registerTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Create Your CentSnippers Account"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:layout_marginBottom="16dp" />
+
+
+            <!-- Username field -->
+            <EditText
+                android:id="@+id/usernameEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Choose a Username"
+                android:minHeight="48dp"
+                android:padding="12dp"
+                android:inputType="text" />
+
+            <!-- Password field -->
+            <EditText
+                android:id="@+id/passwordEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Choose a Password"
+                android:minHeight="48dp"
+                android:padding="12dp"
+                android:inputType="textPassword"
+                android:layout_marginTop="12dp" />
+
+            <!-- Register Button -->
+            <Button
+                android:id="@+id/registerButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Register"
+                android:layout_marginTop="16dp"
+                android:backgroundTint="@color/leatherBrown"
+                android:textColor="@android:color/white"
+                android:minHeight="48dp" />
+
+            <!-- Logo -->
+            <ImageView
+                android:id="@+id/registerLogo"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:src="@drawable/logo"
+                android:layout_marginBottom="24dp"
+                android:contentDescription="App Logo" />
+
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</androidx.constraintlayout.widget.ConstraintLayout>

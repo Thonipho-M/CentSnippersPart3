@@ -1,14 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/analyticsFragmentRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.AnalyticsFragment">
+    android:background="@color/offWhite">
 
-    <!-- TODO: Update blank fragment layout -->
+    <!-- Title -->
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:id="@+id/analyticsTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Your Spending Insights"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@color/textPrimary"
+        android:layout_marginTop="24dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-</FrameLayout>
+    <!-- Placeholder for chart/graph -->
+    <ImageView
+        android:id="@+id/chartImage"
+        android:layout_width="220dp"
+        android:layout_height="220dp"
+        android:contentDescription="Analytics Chart"
+        android:layout_marginTop="32dp"
+        app:layout_constraintTop_toBottomOf="@id/analyticsTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Summary or Insight Text -->
+    <TextView
+        android:id="@+id/analyticsSummary"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="You spent the most in 'Food and Groceries' this month."
+        android:textSize="16sp"
+        android:textColor="@color/textSecondary"
+        android:gravity="center"
+        android:layout_marginTop="16dp"
+        android:padding="12dp"
+        app:layout_constraintTop_toBottomOf="@id/chartImage"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

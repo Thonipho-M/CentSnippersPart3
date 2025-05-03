@@ -1,5 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- just adding all the brand colors I might use in the app to make it feel consistent -->
+
+    <!-- Off-Whites / Neutrals -->
+    <color name="offWhite">#F8F5F0</color>
+    <color name="cream">#FAF3E0</color>
+    <color name="ivory">#FFFFF0</color>
+    <color name="softGray">#EDEDED</color>
+    <color name="fog">#ECEBE9</color>
+
+    <!-- Leather Browns -->
+    <color name="leatherBrown">#6D4C41</color>
+    <color name="darkLeather">#5D4037</color>
+    <color name="warmBrown">#8D6E63</color>
+    <color name="brownHighlight">#A1887F</color>
+    <color name="espresso">#4E342E</color>
+
+    <!-- Sage Greens / Naturals -->
+    <color name="sageGreen">#A5B2A1</color>
+    <color name="sageDark">#8D9E8A</color>
+    <color name="sageSoft">#C8D1C2</color>
+    <color name="oliveMuted">#9E9D84</color>
+    <color name="eucalyptus">#B5C1AE</color>
+
+    <!-- Accent Colors -->
+    <color name="centYellow">#FDD835</color> <!-- matches the money bag in the logo -->
+    <color name="tealAccent">#80CBC4</color>
+    <color name="dustyPink">#D7B8AB</color>
+    <color name="clayRed">#BA7C6C</color>
+    <color name="burntOrange">#D2691E</color>
+
+    <!-- Utility Shades -->
+    <color name="successGreen">#4CAF50</color>
+    <color name="errorRed">#C62828</color>
+    <color name="darkGray">#333333</color>
+    <color name="mediumGray">#666666</color>
+    <color name="lightGray">#999999</color>
+
+    <!-- Text and Background Support -->
+    <color name="textPrimary">#212121</color>
+    <color name="textSecondary">#757575</color>
+    <color name="backgroundBase">#FFFFFF</color>
+    <color name="cardShadow">#1A000000</color>
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>

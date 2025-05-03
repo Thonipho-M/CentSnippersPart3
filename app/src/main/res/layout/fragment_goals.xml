@@ -1,30 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/goalsFragmentLayout"
+    android:id="@+id/goalsFragmentRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:background="@color/offWhite">
 
-    <!-- RecyclerView to display list of goals -->
+    <!-- Page Title -->
+    <TextView
+        android:id="@+id/goalsTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Set Your Financial Goals"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@color/textPrimary"
+        android:layout_marginTop="24dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- RecyclerView for goals -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/goalsRecyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@+id/addGoalFab"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:padding="16dp"
         android:clipToPadding="false"
-        android:paddingBottom="72dp" />
+        app:layout_constraintTop_toBottomOf="@id/goalsTitle"
+        app:layout_constraintBottom_toTopOf="@id/addGoalFab"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Floating action button to add a new goal -->
+    <!-- Add Goal FAB -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addGoalFab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_margin="16dp"
-        app:backgroundTint="@color/purple_500"
-        app:tint="@android:color/white"
         android:contentDescription="Add Goal"
-        app:srcCompat="@android:drawable/ic_input_add" />
-</RelativeLayout>
+        android:layout_margin="16dp"
+        android:backgroundTint="@color/leatherBrown"
+        app:srcCompat="@android:drawable/ic_input_add"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
