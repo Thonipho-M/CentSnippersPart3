@@ -1,100 +1,101 @@
+<!-- 🎥 Demo Video -->
+<!-- Insert a YouTube video link of the app running here -->
 
+# Cent Snippers
 
-Cent Snippers is a personal budgeting Android app designed to help users manage their finances by tracking budgets and goals. It supports user registration and login, allowing users to continue where they left off using a local SQLite database.
+Cent Snippers is a personal budgeting Android app developed using Kotlin and SQLite. It empowers users to take control of their finances through categorized budgeting, monthly goals, and real-time dashboard insights—all with persistent local storage.
 
-## How to Run the App
+```
+Main Features:
+--------------
+✔ User registration & login with session persistence  
+✔ Add income and set monthly minimum & maximum spending goals  
+✔ Track spending in categorized budgets with visual summaries  
+✔ View filtered totals by month or date range  
+✔ Edit income dynamically via dashboard  
+✔ Local SQLite storage ensures offline functionality  
+✔ Clean UI using CardViews, RecyclerViews, and Dialogs  
+```
 
-This guide walks you through setting up and running the app on either a physical Android device or an emulator.
+##  How to Run the App
 
-### 1. Prerequisites
+```bash
+# 1. Prerequisites
+- Android Studio (latest version recommended)
+- Android Emulator or physical device with API level 30+
 
-- Android Studio installed (latest stable version)
-- Android device or emulator with at least API level 30
-
-### 2. Clone the Repository
-
-Run the following in your terminal:
-
+# 2. Clone the Repository
 git clone https://github.com/VCSTDN2024/prog7313-part2-centsnippers1.git
 
-
-### 3. Open the Project in Android Studio
-
+# 3. Open in Android Studio
 - Open Android Studio
-- Click File > Open
-- Navigate to the folder that contains `build.gradle` and open it
-- Let Gradle sync and the project index
+- Click: File > Open > Navigate to the project folder
+- Let Gradle sync
 
-### 4. Run the App
+# 4. Run the App
+- Either connect a device (USB debugging enabled)
+- Or launch an emulator (Pixel 4 API 30 suggested)
+- Press "Run"
+```
 
-#### Option 1: Using a Physical Device
+---
 
-- Connect your phone via USB
-- Enable Developer Options and USB Debugging
-- Select your device in the target list
-- Press Run
+##  How to Use the App
 
-#### Option 2: Using an Emulator
+```text
+1. Register a new user account
+2. Go to Dashboard → Click income to set monthly income
+3. Navigate to Goals → Set monthly min/max spending limits
+4. Add category budgets and create transactions
+5. Use filters to analyze spending trends
+6. Visual insights update dynamically in Dashboard & Goals
+```
 
-- Create a virtual device (Pixel 4, API 30 or similar)
-- Use an image without Google Play if on a lower-end PC
-- Launch the emulator and press Run
+---
 
-### 5. Use the App
+## 💻 Tech Stack
 
-- Register a new account
-- Add budgets and goals
-- Exit and re-open the app to verify data persists
+| Technology       | Purpose                               |
+|------------------|----------------------------------------|
+| Kotlin           | Main programming language              |
+| Android Studio   | IDE used for development               |
+| SQLite           | Local database for data persistence    |
+| ViewBinding      | Type-safe view access                  |
+| RecyclerView     | Display dynamic category & goal lists  |
+| CardView         | Stylish UI containers                  |
+| XML              | UI layout design                       |
 
+---
 
-Features Implemented
+##  Project Structure
 
-
-  - Users can create accounts.
-  - Login persists via a session manager.
-  - Budgets and user information are stored locally using SQLite.
-  - Each user has their own budgets and data.
-  - Users can add budgets with a category and amount.
-  - Bottom navigation bar allows users to switch between Dashboard, Budgets, and Goals.
-
-
-Tech Stack
-
-| Tool           | Purpose                              |
-|----------------|--------------------------------------|
-| Android Studio | IDE for development                  |
-| Kotlin         | Programming language                 |
-| XML            | UI layout files                      |
-| SQLite         | Local database storage               |
-| ViewBinding    | Access layout views safely           |
-| RecyclerView   | Displaying lists (budgets, goals)    |
-
-
-Project Structure (Simplified)
-
-
+```
 com.centsnippers/
 │
 ├── fragments/
 │   ├── LoginFragment.kt
 │   ├── RegisterFragment.kt
-│   ├── BudgetFragment.kt
+│   ├── DashboardFragment.kt
+│   ├── CategoryFragment.kt
 │   ├── GoalsFragment.kt
-│   └── DashboardFragment.kt
+│   └── TransactionFragment.kt
 │
 ├── adapters/
-│   ├── BudgetAdapter.kt
-│   └── GoalsAdapter.kt
+│   ├── CategoryAdapter.kt
+│   ├── CategorySummaryAdapter.kt
+│   ├── GoalsAdapter.kt
+│   └── TransactionAdapter.kt
 │
 ├── models/
-│   ├── BudgetItem.kt
-│   └── GoalItem.kt
-│
-├── database/
-│   └── DatabaseHelper.kt
+│   ├── CategoryItem.kt
+│   ├── Goal.kt
+│   └── Transaction.kt
 │
 ├── utils/
 │   └── SessionManager.kt
+│
+├── data/
+│   └── DatabaseHelper.kt
 │
 └── res/
     ├── layout/
@@ -102,7 +103,19 @@ com.centsnippers/
     └── values/
 ```
 
+---
 
-Author
+##  Authors
 
-Built by Thonipho Mavhungu & Braydon Wooley
+```
+Thonipho Mavhungu  
+Braydon Wooley
+```
+
+---
+
+##  Notes
+
+- Built as part of the PROG7313 Application Development module.
+- App follows local data model using SQLite — no external server dependencies.
+- Designed to function offline and retain data between sessions.
