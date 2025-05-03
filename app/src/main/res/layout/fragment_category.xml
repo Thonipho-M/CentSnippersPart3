@@ -24,18 +24,6 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Total Category Goal Display -->
-    <TextView
-        android:id="@+id/totalCategoryTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Total Goal: R0.00"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="@color/textPrimary"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@id/categoryTitle"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Filter Container -->
     <LinearLayout
@@ -45,26 +33,47 @@
         android:orientation="horizontal"
         android:padding="8dp"
         android:gravity="center_vertical"
-        app:layout_constraintTop_toBottomOf="@id/totalCategoryTextView"
+        app:layout_constraintTop_toBottomOf="@id/categoryTitle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
+        <EditText
+            android:id="@+id/startDateInput"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:hint="Start Date"
+            android:focusable="false"/>
 
-        <Spinner
-        android:id="@+id/monthYearSpinner"
-        android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp" />
-
+        <EditText
+            android:id="@+id/endDateInput"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:hint="End Date"
+            android:focusable="false"/>
 
         <Button
             android:id="@+id/applyFilterButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Apply"
-            android:layout_marginStart="8dp"/>
+            android:layout_marginStart="8dp"
+            android:text="Filter"/>
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/totalCategoryTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Total Spent: R0.00"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/textPrimary"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toBottomOf="@id/filterContainer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
 
     <!-- Category List -->
@@ -75,7 +84,7 @@
         android:clipToPadding="false"
         android:padding="16dp"
         tools:listitem="@layout/item_category"
-        app:layout_constraintTop_toBottomOf="@id/filterContainer"
+        app:layout_constraintTop_toBottomOf="@id/totalCategoryTextView"
         app:layout_constraintBottom_toTopOf="@id/addCategoryFab"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

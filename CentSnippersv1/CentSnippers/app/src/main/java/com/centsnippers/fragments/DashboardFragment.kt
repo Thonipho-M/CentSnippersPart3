@@ -13,9 +13,7 @@ class DashboardFragment : Fragment() {
     private var _binding: FragmentDashboardBinding? = null
     private val binding get() = _binding!!
 
-    // Example data - this will be fetched from the database later
-    private val totalIncome = 8000
-    private val totalExpenses = 5400
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

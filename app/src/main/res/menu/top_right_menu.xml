@@ -1,7 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/goalsFragment"
-        android:title="Goals"/>
+        android:id="@+id/analyticsFragment"
+        android:title="Analytics" />
     <item
         android:id="@+id/rewardsFragment"
         android:title="Rewards"/>

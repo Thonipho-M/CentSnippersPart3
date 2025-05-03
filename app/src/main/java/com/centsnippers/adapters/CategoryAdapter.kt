@@ -40,24 +40,13 @@ class CategoryAdapter(
 
     override fun onBindViewHolder(holder: CategoryViewHolder, position: Int) {
         val item = categoryList[position]
+
         holder.title.text = item.title
         holder.description.text = item.description
 
-        // Defensive check
-        if (!::dbHelper.isInitialized || userId == -1) {
-            holder.amounts.text = "Budget: R%.2f".format(item.amount)
-            holder.remaining.text = "Login required"
-            holder.transactionCount.text = ""
-            return
-        }
-
-        // Get all transactions for the user
-        val transactions = dbHelper.getTransactionsForUser(userId)
-        val matchingTransactions = transactions.filter { it.categoryId == item.id }
-
-        val totalSpent = matchingTransactions.sumOf { it.amount }
+        val totalSpent = item.totalSpent
         val remainingAmount = item.amount - totalSpent
-        val transactionCount = matchingTransactions.size
+        val transactionCount = item.transactionCount
 
         holder.amounts.text = "Budget: R%.2f | Spent: R%.2f".format(item.amount, totalSpent)
 
@@ -73,6 +62,7 @@ class CategoryAdapter(
             onDeleteClick(position)
         }
     }
+
 
     override fun getItemCount(): Int = categoryList.size
 

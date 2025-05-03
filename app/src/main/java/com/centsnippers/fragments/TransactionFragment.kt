@@ -96,7 +96,6 @@ class TransactionFragment : Fragment() {
         val transactions = dbHelper.getTransactionsForUser(userId)
         transactionAdapter.updateList(transactions)
         val total = transactions.sumOf { it.amount }
-        binding.totalTransactionTextView.text = "Total: R%.2f".format(total)
     }
     private fun setupDatePickers() {
         val calendar = Calendar.getInstance()
@@ -126,8 +125,12 @@ class TransactionFragment : Fragment() {
             val txnEnd = sdf.parse(it.endDate)
             txnStart != null && txnEnd != null && !txnEnd.before(start) && !txnStart.after(end)
         }
-
         transactionAdapter.updateList(filtered)
+        binding.transactionRecyclerView.adapter?.notifyDataSetChanged()
+
+        val totalSpent = filtered.sumOf { it.amount }
+        binding.totalSpentTextView.text = "Total Spent: R%.2f".format(totalSpent)
+
     }
 
 
@@ -234,5 +237,6 @@ class TransactionFragment : Fragment() {
         }
         return super.onOptionsItemSelected(item)
     }
+
 
 }

@@ -25,4 +25,14 @@ class SessionManager(context: Context) {
     fun clearSession() {
         prefs.edit() { clear() }
     }
+    fun saveIncome(income: Double) {
+        val editor = prefs.edit()
+        editor.putFloat("USER_INCOME", income.toFloat())
+        editor.apply()
+    }
+
+    fun getIncome(): Double {
+        return prefs.getFloat("USER_INCOME", 0.0f).toDouble()
+    }
+
 }

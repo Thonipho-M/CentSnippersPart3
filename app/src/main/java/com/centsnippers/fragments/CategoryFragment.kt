@@ -1,6 +1,7 @@
 package com.centsnippers.fragments
 
 import android.app.AlertDialog
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.*
@@ -58,81 +59,75 @@ class CategoryFragment : Fragment() {
         binding.categoryRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.categoryRecyclerView.adapter = categoryAdapter
 
-        setupMonthYearSpinner()
+        setupDatePickers()
+
         val calendar = Calendar.getInstance()
-        val currentMonth = calendar.get(Calendar.MONTH) + 1  // 1-based (Jan = 1)
+        val currentMonth = calendar.get(Calendar.MONTH) + 1
         val currentYear = calendar.get(Calendar.YEAR)
 
         loadFilteredCategoriesForMonth(currentMonth, currentYear)
-
 
         binding.addCategoryFab.setOnClickListener {
             showAddCategoryDialog()
         }
 
-//Listener to load filtered items
-        binding.monthYearSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
-                val selected = parent.getItemAtPosition(position).toString()  // e.g. "April 2025"
-                val parts = selected.split(" ")
-                if (parts.size == 2) {
-                    val monthName = parts[0]
-                    val year = parts[1].toIntOrNull() ?: return
+        binding.applyFilterButton.setOnClickListener {
+            val start = binding.startDateInput.text.toString()
+            val end = binding.endDateInput.text.toString()
 
-                    // Convert month name to Calendar index
-                    val monthIndex = try {
-                        SimpleDateFormat("MMMM", Locale.getDefault()).parse(monthName)?.let {
-                            Calendar.getInstance().apply { time = it }.get(Calendar.MONTH) + 1
-                        } ?: return
-                    } catch (e: Exception) {
-                        return
-                    }
+            Toast.makeText(requireContext(), "Filter clicked", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Start: $start | End: $end", Toast.LENGTH_SHORT).show()
 
-                    loadFilteredCategoriesForMonth(monthIndex, year)
-                }
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>) {
-                // No-op
+            if (start.isBlank() || end.isBlank()) {
+                Toast.makeText(requireContext(), "Please select both dates", Toast.LENGTH_SHORT).show()
+            } else {
+                loadFilteredCategoriesForDateRange(start, end)
             }
         }
-
-
     }
 
-
-    private fun setupMonthYearSpinner() {
+    private fun setupDatePickers() {
         val calendar = Calendar.getInstance()
-        val sdf = SimpleDateFormat("MMMM yyyy", Locale.getDefault())
-        val months = mutableListOf<String>()
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 
-        for (i in 0 until 24) { // Past 24 months
-            months.add(sdf.format(calendar.time))
-            calendar.add(Calendar.MONTH, -1)
+        binding.startDateInput.setOnClickListener {
+            DatePickerDialog(requireContext(), { _, year, month, day ->
+                binding.startDateInput.setText(String.format("%02d/%02d/%04d", day, month + 1, year))
+            }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
         }
 
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, months)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        binding.monthYearSpinner.adapter = adapter
+        binding.endDateInput.setOnClickListener {
+            DatePickerDialog(requireContext(), { _, year, month, day ->
+                binding.endDateInput.setText(String.format("%02d/%02d/%04d", day, month + 1, year))
+            }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
+        }
     }
 
-
-    private fun loadMonthlyFilteredCategories(month: Int) {
+    private fun loadFilteredCategoriesForDateRange(startDateStr: String, endDateStr: String) {
         val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        val calendar = Calendar.getInstance()
+        val startDate = sdf.parse(startDateStr)
+        val endDate = sdf.parse(endDateStr)
+
+        if (startDate == null || endDate == null) {
+            Toast.makeText(requireContext(), "Invalid dates", Toast.LENGTH_SHORT).show()
+            return
+        }
 
         val allCategories = dbHelper.getCategoriesForUser(userId)
         val allTransactions = dbHelper.getTransactionsForUser(userId)
 
+        Toast.makeText(requireContext(), "Transactions loaded: ${allTransactions.size}", Toast.LENGTH_SHORT).show()
+
         val filteredTransactions = allTransactions.filter { txn ->
             try {
                 val txnDate = sdf.parse(txn.startDate)
-                calendar.time = txnDate
-                (calendar.get(Calendar.MONTH) + 1) == month
+                txnDate != null && !txnDate.before(startDate) && !txnDate.after(endDate)
             } catch (e: Exception) {
                 false
             }
         }
+
+        Toast.makeText(requireContext(), "Filtered transactions: ${filteredTransactions.size}", Toast.LENGTH_SHORT).show()
 
         val updatedCategories = allCategories.map { category ->
             val txns = filteredTransactions.filter { it.categoryId == category.id }
@@ -142,10 +137,13 @@ class CategoryFragment : Fragment() {
             )
         }
 
-        categoryAdapter.updateList(updatedCategories)
 
-        val filteredTotal = updatedCategories.sumOf { it.amount }
-        binding.totalCategoryTextView.text = "Filtered Total Budget: R%.2f".format(filteredTotal)
+        Toast.makeText(requireContext(), "Updated categories: ${updatedCategories.size}", Toast.LENGTH_SHORT).show()
+
+        categoryAdapter.updateList(updatedCategories)
+        val totalSpentFiltered = updatedCategories.sumOf { it.totalSpent }
+        binding.totalCategoryTextView.text = "Total Spent (Filtered): R%.2f".format(totalSpentFiltered)
+
     }
 
     private fun loadCategories() {
@@ -154,6 +152,7 @@ class CategoryFragment : Fragment() {
         val total = categories.sumOf { it.amount }
         binding.totalCategoryTextView.text = "Total Budgeted: R%.2f".format(total)
     }
+
     private fun loadFilteredCategoriesForMonth(month: Int, year: Int) {
         val allCategories = dbHelper.getCategoriesForUser(userId)
         val allTransactions = dbHelper.getTransactionsForUser(userId)
@@ -162,16 +161,13 @@ class CategoryFragment : Fragment() {
             try {
                 val txnDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).parse(txn.startDate)
                 val txnCal = Calendar.getInstance().apply { time = txnDate!! }
-                val txnMonth = txnCal.get(Calendar.MONTH) + 1  // Calendar.MONTH is 0-based
+                val txnMonth = txnCal.get(Calendar.MONTH) + 1
                 val txnYear = txnCal.get(Calendar.YEAR)
-
                 txnMonth == month && txnYear == year
             } catch (e: Exception) {
                 false
             }
-
         }
-
 
         val updatedCategories = allCategories.map { category ->
             val txns = filteredTransactions.filter { it.categoryId == category.id }
@@ -182,22 +178,19 @@ class CategoryFragment : Fragment() {
         }
 
         categoryAdapter.updateList(updatedCategories)
+        val totalSpentFiltered = updatedCategories.sumOf { it.totalSpent }
+        binding.totalCategoryTextView.text = "Total Spent (Filtered): R%.2f".format(totalSpentFiltered)
 
-        // Optional: display month name from integer
+
+
         val monthName = SimpleDateFormat("MMMM", Locale.getDefault()).format(Calendar.getInstance().apply {
             set(Calendar.MONTH, month - 1)
         }.time)
 
         binding.totalCategoryTextView.text =
             "Total Budget for $monthName $year: R%.2f".format(updatedCategories.sumOf { it.amount })
-        binding.categoryRecyclerView.invalidate()
-        binding.categoryRecyclerView.adapter?.notifyDataSetChanged()
-
-
-        Toast.makeText(requireContext(), "Filtered count: ${updatedCategories.size}", Toast.LENGTH_SHORT).show()
 
     }
-
 
     private fun showAddCategoryDialog() {
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add_category, null)
