@@ -1,5 +1,5 @@
 package com.centsnippers.fragments
-
+import com.centsnippers.models.RegisterResult
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -39,22 +39,16 @@ class RegisterFragment : Fragment() {
             }
 
             try {
-                val success = dbHelper.registerUser(username, password)
-                if (success) {
-                    Toast.makeText(context, "Registration successful!", Toast.LENGTH_SHORT).show()
+                val result = dbHelper.registerUser(username, password)
 
-                    // Optional: auto-login and go to dashboard
-                    val userId = dbHelper.validateUser(username, password)
-                    if (userId != -1) {
-                        SessionManager(requireContext()).saveUserSession(userId)
-                        findNavController().navigate(R.id.action_registerFragment_to_dashboardFragment)
-                    } else {
-                        // Fallback if something went wrong
-                        findNavController().navigate(R.id.action_registerFragment_to_loginFragment2)
+                when (result) {
+                    is RegisterResult.Success -> {
+                        Toast.makeText(requireContext(), "Registration successful!", Toast.LENGTH_SHORT).show()
+                        // navigate to login or dashboard...
                     }
-
-                } else {
-                    Toast.makeText(context, "Username already exists", Toast.LENGTH_SHORT).show()
+                    is RegisterResult.Failure -> {
+                        Toast.makeText(requireContext(), "Error: ${result.reason}", Toast.LENGTH_LONG).show()
+                    }
                 }
 
             } catch (e: Exception) {

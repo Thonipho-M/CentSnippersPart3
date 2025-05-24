@@ -1,3 +1,4 @@
+//Sessionmanager
 package com.centsnippers.utils
 
 import android.content.Context

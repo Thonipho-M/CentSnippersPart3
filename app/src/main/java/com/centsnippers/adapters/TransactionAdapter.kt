@@ -1,6 +1,13 @@
 package com.centsnippers.adapters
 
 import android.app.AlertDialog
+import android.content.ContentValues
+import android.content.Context
+import android.net.Uri
+import android.os.Build
+import android.os.Environment
+import android.provider.MediaStore
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,9 +17,11 @@ import com.bumptech.glide.Glide
 import com.centsnippers.R
 import com.centsnippers.data.DatabaseHelper
 import com.centsnippers.models.TransactionItem
-import android.net.Uri
-import android.util.Log
-
+import java.io.File
+import java.io.FileOutputStream
+import java.io.InputStream
+import java.text.SimpleDateFormat
+import java.util.*
 
 class TransactionAdapter(
     private var transactionList: MutableList<TransactionItem>,
@@ -37,7 +46,7 @@ class TransactionAdapter(
     override fun onBindViewHolder(holder: TransactionViewHolder, position: Int) {
         val item = transactionList[position]
 
-        // Basic transaction info
+        // Load basic transaction data
         holder.transactionTitle.text = item.title
         holder.transactionAmount.text = "R%.2f".format(item.amount)
         holder.transactionDescription.text = item.description
@@ -47,29 +56,27 @@ class TransactionAdapter(
         holder.transactionCategory.text = "Category: $categoryTitle"
         holder.transactionDates.text = "${item.startDate} - ${item.endDate}"
 
-        // Image Handling
+        // Only process image if URL exists
         if (!item.imageUrl.isNullOrEmpty()) {
             holder.imagePreview.visibility = View.VISIBLE
-
             val imageUri = item.imageUrl
 
-
-
+            // Load preview
             Glide.with(holder.imagePreview.context)
                 .load(imageUri)
                 .placeholder(android.R.drawable.ic_menu_gallery)
                 .error(android.R.drawable.ic_delete)
                 .into(holder.imagePreview)
 
+            // Handle click on image preview
             holder.imagePreview.setOnClickListener {
                 val context = holder.imagePreview.context
-                val dialogView =
-                    LayoutInflater.from(context).inflate(R.layout.dialog_image_preview, null)
+                val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_image_preview, null)
                 val fullImageView = dialogView.findViewById<ImageView>(R.id.fullImageView)
 
                 try {
                     Glide.with(context)
-                        .load(Uri.parse(imageUri))  //
+                        .load(Uri.parse(imageUri))
                         .placeholder(android.R.drawable.ic_menu_gallery)
                         .error(android.R.drawable.ic_delete)
                         .into(fullImageView)
@@ -78,17 +85,13 @@ class TransactionAdapter(
                         .setView(dialogView)
                         .setPositiveButton("Close", null)
                         .setNeutralButton("Download") { _, _ ->
-                            Toast.makeText(
-                                context,
-                                "Download not implemented yet",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            downloadImage(context, Uri.parse(imageUri), item.title)
                         }
                         .show()
 
                 } catch (e: Exception) {
-                    Toast.makeText(context, "Failed to load image: ${e.message}", Toast.LENGTH_LONG)
-                        .show()
+                    Toast.makeText(context, "Failed to load image: ${e.message}", Toast.LENGTH_LONG).show()
+                    Log.e("TransactionAdapter", "Image load failed: ${e.message}")
                     e.printStackTrace()
                 }
             }
@@ -98,11 +101,58 @@ class TransactionAdapter(
         }
     }
 
-        override fun getItemCount(): Int = transactionList.size
+    override fun getItemCount(): Int = transactionList.size
 
     fun updateList(newList: List<TransactionItem>) {
         transactionList.clear()
         transactionList.addAll(newList)
         notifyDataSetChanged()
+    }
+
+    // --- Download logic for images ---
+    private fun downloadImage(context: Context, uri: Uri, title: String) {
+        try {
+            val inputStream: InputStream? = context.contentResolver.openInputStream(uri)
+            val timestamp = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+            val fileName = "${title}_$timestamp.jpg"
+
+            val savedUri: Uri? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                val contentValues = ContentValues().apply {
+                    put(MediaStore.Images.Media.DISPLAY_NAME, fileName)
+                    put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg")
+                    put(MediaStore.Images.Media.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/CentSnippers")
+                }
+
+                val imageUri = context.contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+                imageUri?.let { uriOut ->
+                    context.contentResolver.openOutputStream(uriOut)?.use { output ->
+                        inputStream?.copyTo(output)
+                    }
+                }
+                imageUri
+            } else {
+                val picturesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+                val appDir = File(picturesDir, "CentSnippers").apply { if (!exists()) mkdirs() }
+                val outFile = File(appDir, fileName)
+
+                FileOutputStream(outFile).use { output ->
+                    inputStream?.copyTo(output)
+                }
+
+                Uri.fromFile(outFile)
+            }
+
+            if (savedUri != null) {
+                Toast.makeText(context, "Image downloaded successfully", Toast.LENGTH_SHORT).show()
+                Log.i("TransactionAdapter", "Image downloaded to: $savedUri")
+            } else {
+                throw Exception("File save failed")
+            }
+
+        } catch (e: Exception) {
+            Toast.makeText(context, "Download failed: ${e.message}", Toast.LENGTH_LONG).show()
+            Log.e("TransactionAdapter", "Download failed: ${e.message}")
+            e.printStackTrace()
+        }
     }
 }

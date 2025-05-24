@@ -4,37 +4,27 @@
 // ===============================
 
 package com.centsnippers.fragments
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.centsnippers.adapters.CategorySummaryAdapter
+
 import android.app.AlertDialog
-import android.widget.EditText
-
-
-import android.os.Bundle
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import com.centsnippers.databinding.FragmentDashboardBinding
-import com.centsnippers.data.DatabaseHelper
-import com.centsnippers.utils.SessionManager
-//Add the top right menu
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
-import android.widget.Toast
 import android.content.Intent
+import android.os.Bundle
+import android.text.InputType
+import android.util.Log
+import android.view.*
+import android.widget.EditText
+import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.centsnippers.MainActivity
 import com.centsnippers.R
-
-//for current date
-
+import com.centsnippers.adapters.CategorySummaryAdapter
+import com.centsnippers.data.DatabaseHelper
+import com.centsnippers.databinding.FragmentDashboardBinding
+import com.centsnippers.utils.SessionManager
 import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.util.*
-
-
-
 
 class DashboardFragment : Fragment() {
 
@@ -57,29 +47,31 @@ class DashboardFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setHasOptionsMenu(true)
 
-        // Initialize helpers
+        // === Init Session + DB ===
         dbHelper = DatabaseHelper(requireContext())
         sessionManager = SessionManager(requireContext())
         userId = sessionManager.getUserId()
+        Log.d("DashboardFragment", "USER ID: $userId | ACTION: Fragment launched")
 
-        //set date for current date
+        // === Month Display ===
         val monthFormat = SimpleDateFormat("MMMM yyyy", Locale.getDefault())
         val currentMonth = monthFormat.format(Date())
         binding.dashboardTitle.text = "Snapshot for $currentMonth"
 
-
+        // === Check if user is logged in ===
         if (userId == -1) {
             binding.totalIncomeText.text = "Not logged in"
+            Log.e("DashboardFragment", "USER ID: unknown | ACTION: Attempted to access dashboard without login")
             return
         }
 
-        // Fetch all transactions for the logged-in user
+        // === Get Transactions & Categories ===
         val transactions = dbHelper.getTransactionsForUser(userId)
-// Fetch categories and transactions
         val allCategories = dbHelper.getCategoriesForUser(userId)
         val allTransactions = dbHelper.getTransactionsForUser(userId)
+        Log.d("DashboardFragment", "USER ID: $userId | ACTION: Pulled ${transactions.size} transactions, ${allCategories.size} categories")
 
-// Map each category to include total spent and transaction count
+        // === Map categories to spending summaries ===
         val categorySummaries = allCategories.map { category ->
             val relatedTransactions = allTransactions.filter { it.categoryId == category.id }
             val totalSpent = relatedTransactions.sumOf { it.amount }
@@ -89,34 +81,43 @@ class DashboardFragment : Fragment() {
             )
         }
 
-// Update the summary RecyclerView
-        binding.summaryRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-        binding.summaryRecyclerView.adapter = CategorySummaryAdapter(categorySummaries)
+        // === RecyclerView Setup ===
+        // grouped using `with` – no duplicate assignments
+        with(binding.summaryRecyclerView) {
+            layoutManager = LinearLayoutManager(requireContext())
+            adapter = CategorySummaryAdapter(categorySummaries)
+        }
 
+        // === Set Click to Update Income ===
         binding.totalIncomeText.setOnClickListener {
+            Log.d("DashboardFragment", "USER ID: $userId | ACTION: Clicked income label to update income")
             showIncomeDialog()
         }
 
+        // === Calculate Budget Summary ===
+        // === Pull active incomes from DB ===
+        val incomeList = dbHelper.getIncomesForUser(userId).filter { it.isActive }
+        val now = LocalDate.now()
 
-        // Calculate total income and expenses
-        val income = transactions.filter { it.amount > 0 }.sumOf { it.amount }
+        val income = incomeList
+            .filter { it.startDate <= now && (it.endDate == null || it.endDate >= now) }
+            .sumOf { it.amount }
+
+        Log.i("DashboardFragment", "User $userId | Calculated income from income table: R$income")
+
         val expenses = transactions.filter { it.amount < 0 }.sumOf { it.amount } * -1
         val remaining = income - expenses
 
-        // Update the UI with real-time values
+        Log.i("DashboardFragment", "USER ID: $userId | ACTION: Calculated budget | Income: R$income | Expenses: R$expenses | Remaining: R$remaining")
+
+        // === Show Summary on UI ===
         binding.totalIncomeText.text = "Total Income: R%.2f".format(income)
         binding.totalExpensesText.text = "Total Expenses: R%.2f".format(expenses)
         binding.remainingBudgetText.text = "Remaining Budget: R%.2f".format(remaining)
-// Summary Adapter
-        val categories = dbHelper.getCategoriesForUser(userId)
-        val adapter = CategorySummaryAdapter(categories)
-        binding.summaryRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-        binding.summaryRecyclerView.adapter = CategorySummaryAdapter(categorySummaries)
-
-
-
     }
+
     private fun loadDashboardData() {
+        // used after income is manually updated
         val income = sessionManager.getIncome()
         val transactions = dbHelper.getTransactionsForUser(userId)
         val expenses = transactions.sumOf { it.amount }
@@ -125,8 +126,6 @@ class DashboardFragment : Fragment() {
         binding.totalIncomeText.text = "Total Income: R%.2f".format(income)
         binding.totalExpensesText.text = "Expenses: R%.2f".format(expenses)
         binding.remainingBudgetText.text = "Remaining: R%.2f".format(remaining)
-
-
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -143,10 +142,17 @@ class DashboardFragment : Fragment() {
                 findNavController().navigate(R.id.helpPage)
                 true
             }
+            R.id.incomeFragment -> {
+                findNavController().navigate(R.id.incomeFragment)
+                Log.d("DashboardFragment", "User $userId | Navigated to IncomeFragment via top menu")
+                true
+            }
+
             R.id.logoutButton -> {
                 val sessionManager = SessionManager(requireContext())
                 sessionManager.clearSession()
                 Toast.makeText(requireContext(), "Logged out", Toast.LENGTH_SHORT).show()
+                Log.i("DashboardFragment", "USER ID: $userId | ACTION: Logged out")
                 startActivity(Intent(requireContext(), MainActivity::class.java))
                 requireActivity().finish()
                 true
@@ -165,13 +171,14 @@ class DashboardFragment : Fragment() {
         builder.setTitle("Enter Your Total Income")
 
         val input = EditText(requireContext())
-        input.inputType = android.text.InputType.TYPE_CLASS_NUMBER or android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL
+        input.inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL
         builder.setView(input)
 
         builder.setPositiveButton("Save") { _, _ ->
             val value = input.text.toString().toDoubleOrNull()
             if (value != null) {
                 sessionManager.saveIncome(value)
+                Log.i("DashboardFragment", "USER ID: $userId | ACTION: Income updated to R$value via income dialog")
                 loadDashboardData()
             } else {
                 Toast.makeText(requireContext(), "Please enter a valid amount", Toast.LENGTH_SHORT).show()
@@ -181,7 +188,6 @@ class DashboardFragment : Fragment() {
         builder.setNegativeButton("Cancel", null)
         builder.show()
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

@@ -77,6 +77,11 @@
         android:id="@+id/helpPage"
         android:name="com.centsnippers.fragments.HelpFragment"
         android:label="Help" />
+    <fragment
+        android:id="@+id/incomeFragment"
+        android:name="com.centsnippers.fragments.IncomeFragment"
+        android:label="Income"
+        tools:layout="@layout/fragment_income" />
 
 
 </navigation>

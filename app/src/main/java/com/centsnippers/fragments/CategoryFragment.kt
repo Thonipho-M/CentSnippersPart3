@@ -75,8 +75,6 @@ class CategoryFragment : Fragment() {
             val start = binding.startDateInput.text.toString()
             val end = binding.endDateInput.text.toString()
 
-            Toast.makeText(requireContext(), "Filter clicked", Toast.LENGTH_SHORT).show()
-            Toast.makeText(requireContext(), "Start: $start | End: $end", Toast.LENGTH_SHORT).show()
 
             if (start.isBlank() || end.isBlank()) {
                 Toast.makeText(requireContext(), "Please select both dates", Toast.LENGTH_SHORT).show()
@@ -116,7 +114,6 @@ class CategoryFragment : Fragment() {
         val allCategories = dbHelper.getCategoriesForUser(userId)
         val allTransactions = dbHelper.getTransactionsForUser(userId)
 
-        Toast.makeText(requireContext(), "Transactions loaded: ${allTransactions.size}", Toast.LENGTH_SHORT).show()
 
         val filteredTransactions = allTransactions.filter { txn ->
             try {
@@ -127,7 +124,6 @@ class CategoryFragment : Fragment() {
             }
         }
 
-        Toast.makeText(requireContext(), "Filtered transactions: ${filteredTransactions.size}", Toast.LENGTH_SHORT).show()
 
         val updatedCategories = allCategories.map { category ->
             val txns = filteredTransactions.filter { it.categoryId == category.id }
@@ -138,7 +134,6 @@ class CategoryFragment : Fragment() {
         }
 
 
-        Toast.makeText(requireContext(), "Updated categories: ${updatedCategories.size}", Toast.LENGTH_SHORT).show()
 
         categoryAdapter.updateList(updatedCategories)
         val totalSpentFiltered = updatedCategories.sumOf { it.totalSpent }
