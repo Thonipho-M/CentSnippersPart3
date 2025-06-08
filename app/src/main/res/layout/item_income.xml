@@ -4,32 +4,55 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    android:background="@android:color/white"
-    app:cardElevation="4dp"
-    app:cardCornerRadius="12dp">
-<!-- ===================================================
-     item_income.xml
-     Purpose: One row in RecyclerView for an income item
-     =================================================== -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="12dp">
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp">
 
-    <TextView
-        android:id="@+id/incomeDescription"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Income Description"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        android:orientation="vertical"
+        android:padding="16dp">
 
-    <TextView
-        android:id="@+id/incomeAmount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="R0.00"
-        android:textSize="14sp" />
-</LinearLayout>
+        <!-- Income Description -->
+        <TextView
+            android:id="@+id/txtIncomeDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Income Source"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:textColor="@android:color/black" />
+
+        <!-- Amount -->
+        <TextView
+            android:id="@+id/txtIncomeAmount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="R0.00"
+            android:textSize="14sp"
+            android:textColor="@android:color/holo_green_dark"
+            android:layout_marginTop="4dp" />
+
+        <!-- Frequency (e.g., Monthly) -->
+        <TextView
+            android:id="@+id/txtIncomeCycle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Monthly"
+            android:textSize="14sp"
+            android:textColor="@android:color/darker_gray"
+            android:layout_marginTop="2dp" />
+
+        <!-- Date Range -->
+        <TextView
+            android:id="@+id/txtIncomeDateRange"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="From 01 Jan 2024 to 31 Dec 2024"
+            android:textSize="13sp"
+            android:textColor="@android:color/darker_gray"
+            android:layout_marginTop="2dp" />
+
+    </LinearLayout>
 </androidx.cardview.widget.CardView>
+

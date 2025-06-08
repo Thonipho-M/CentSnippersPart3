@@ -1,18 +1,16 @@
-// Updated GoalsFragment.kt
 package com.centsnippers.fragments
 
 import android.app.AlertDialog
 import android.os.Bundle
 import android.view.*
 import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.centsnippers.R
-import com.centsnippers.data.DatabaseHelper
 import com.centsnippers.databinding.FragmentGoalsBinding
-import com.centsnippers.models.Goal
-import com.centsnippers.utils.SessionManager
+import com.centsnippers.utils.FirebaseGoalService
+import com.centsnippers.utils.FirebaseTransactionService
+import com.google.firebase.auth.FirebaseAuth
 import java.text.DecimalFormat
 import java.text.SimpleDateFormat
 import java.util.*
@@ -22,9 +20,7 @@ class GoalsFragment : Fragment() {
     private var _binding: FragmentGoalsBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var dbHelper: DatabaseHelper
-    private lateinit var sessionManager: SessionManager
-    private var userId: Int = -1
+    private val firebaseUserId get() = FirebaseAuth.getInstance().currentUser?.uid
 
     private var minGoal: Double = 0.0
     private var maxGoal: Double = 0.0
@@ -41,17 +37,21 @@ class GoalsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        dbHelper = DatabaseHelper(requireContext())
-        sessionManager = SessionManager(requireContext())
-        userId = sessionManager.getUserId()
-
-        if (userId == -1) {
+        if (firebaseUserId == null) {
             Toast.makeText(requireContext(), "User not logged in", Toast.LENGTH_SHORT).show()
             return
         }
 
         binding.addGoalFab.setOnClickListener {
             showGoalDialog()
+        }
+
+        FirebaseGoalService.loadGoal { goal ->
+            goal?.let {
+                minGoal = it.minGoal
+                maxGoal = it.maxGoal
+                updateGoalsDisplay()
+            }
         }
 
         calculateMonthlySpending()
@@ -63,20 +63,21 @@ class GoalsFragment : Fragment() {
         val currentMonth = calendar.get(Calendar.MONTH)
         val currentYear = calendar.get(Calendar.YEAR)
 
-        val allTransactions = dbHelper.getTransactionsForUser(userId)
-        val filteredTransactions = allTransactions.filter { txn ->
-            try {
-                val txnDate = sdf.parse(txn.startDate)
-                val txnCal = Calendar.getInstance().apply { time = txnDate!! }
-                txnCal.get(Calendar.MONTH) == currentMonth &&
-                        txnCal.get(Calendar.YEAR) == currentYear
-            } catch (e: Exception) {
-                false
+        FirebaseTransactionService.getTransactions { allTransactions ->
+            val filteredTransactions = allTransactions.filter { txn ->
+                try {
+                    val txnDate = sdf.parse(txn.startDate)
+                    val txnCal = Calendar.getInstance().apply { time = txnDate!! }
+                    txnCal.get(Calendar.MONTH) == currentMonth &&
+                            txnCal.get(Calendar.YEAR) == currentYear
+                } catch (e: Exception) {
+                    false
+                }
             }
-        }
 
-        actualSpent = filteredTransactions.sumOf { it.amount }
-        updateGoalsDisplay()
+            actualSpent = filteredTransactions.sumOf { it.amount }
+            updateGoalsDisplay()
+        }
     }
 
     private fun updateGoalsDisplay() {
@@ -119,10 +120,16 @@ class GoalsFragment : Fragment() {
                 val min = minGoalInput.text.toString().toDoubleOrNull()
                 val max = maxGoalInput.text.toString().toDoubleOrNull()
                 if (min != null && max != null) {
-                    minGoal = min
-                    maxGoal = max
-                    updateGoalsDisplay()
-                    Toast.makeText(requireContext(), "Goals Updated", Toast.LENGTH_SHORT).show()
+                    FirebaseGoalService.saveGoal(min, max) { success, error ->
+                        if (success) {
+                            minGoal = min
+                            maxGoal = max
+                            updateGoalsDisplay()
+                            Toast.makeText(requireContext(), "Goals saved!", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(requireContext(), "Error: $error", Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 } else {
                     Toast.makeText(requireContext(), "Enter valid values", Toast.LENGTH_SHORT).show()
                 }

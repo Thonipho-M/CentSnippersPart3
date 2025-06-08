@@ -2,56 +2,110 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/incomeFragmentRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/offWhite">
+    android:padding="16dp"
+    android:background="@color/offWhite"
+    tools:context=".fragments.IncomeFragment">
 
-<!-- ===================================================
-     fragment_income.xml
-     =================================================== -->
-<LinearLayout
-
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
-
-    <!-- Header / Total Display -->
+    <!-- Title -->
     <TextView
-        android:id="@+id/incomeHeader"
+        android:id="@+id/incomeTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="My Income Sources"
+        android:text="Your Income Sources"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:layout_marginBottom="8dp"/>
+        android:textColor="@color/textPrimary"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="12dp" />
 
+    <!-- Filter Area -->
+    <LinearLayout
+        android:id="@+id/incomeFilterBar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:padding="8dp"
+        android:layout_marginTop="12dp"
+        app:layout_constraintTop_toBottomOf="@id/incomeTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <EditText
+            android:id="@+id/startDateInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Start Date"
+            android:focusable="false"
+            android:inputType="none"
+            android:padding="8dp"/>
+
+        <EditText
+            android:id="@+id/endDateInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:hint="End Date"
+            android:focusable="false"
+            android:inputType="none"
+            android:padding="8dp"/>
+
+        <Button
+            android:id="@+id/applyFilterButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Filter"
+            android:layout_marginStart="8dp"/>
+    </LinearLayout>
+
+    <!-- Total Income Display -->
     <TextView
-        android:id="@+id/totalIncomeThisMonth"
+        android:id="@+id/totalIncomeTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Total Income: R0.00"
         android:textSize="16sp"
-        android:layout_marginBottom="12dp"/>
+        android:textStyle="bold"
+        android:textColor="@color/black"
+        android:layout_marginTop="4dp"
+        app:layout_constraintTop_toBottomOf="@id/incomeFilterBar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- RecyclerView to list all income records -->
+    <!-- RecyclerView to show income list -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/incomeRecyclerView"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
-    <!-- Add Income Floating Button -->
+        android:clipToPadding="false"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:overScrollMode="never"
+        tools:listitem="@layout/item_income"
+        app:layout_constraintTop_toBottomOf="@id/totalIncomeTextView"
+        app:layout_constraintBottom_toTopOf="@id/addIncomeFab"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Add Income Button -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addIncomeFab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:contentDescription="Add Income"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
         app:srcCompat="@android:drawable/ic_input_add"
+        android:backgroundTint="@color/leatherBrown"
         app:tint="@android:color/white"
-        android:backgroundTint="@color/leatherBrown" />
-</LinearLayout>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="16dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

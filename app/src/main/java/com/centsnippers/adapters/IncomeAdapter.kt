@@ -1,54 +1,57 @@
-// ================================================================
-// IncomeAdapter.kt — Adapter for RecyclerView
-// Purpose: Binds a list of income items to RecyclerView inside IncomeFragment
-// Author's POV: Helps present the user with each income they’ve created
-// ================================================================
-
 package com.centsnippers.adapters
 
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.centsnippers.R
-import com.centsnippers.models.*
+import com.centsnippers.models.CycleType
+import com.centsnippers.models.IncomeItem
+import java.time.format.DateTimeFormatter
 
-class IncomeAdapter(private val incomeList: List<IncomeItem>) :
-    RecyclerView.Adapter<IncomeAdapter.IncomeViewHolder>() {
+class IncomeAdapter(
+    private var incomeList: List<IncomeItem>
+) : RecyclerView.Adapter<IncomeAdapter.IncomeViewHolder>() {
 
-    // ============================================================
-    // ViewHolder class — binds layout to individual data items
-    // POV: Holds views for each row to display income
-    // ============================================================
     class IncomeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val desc: TextView = itemView.findViewById(R.id.incomeDescription)
-        val amount: TextView = itemView.findViewById(R.id.incomeAmount)
+        val incomeDescription: TextView = itemView.findViewById(R.id.txtIncomeDescription)
+        val incomeAmount: TextView = itemView.findViewById(R.id.txtIncomeAmount)
+        val incomeCycle: TextView = itemView.findViewById(R.id.txtIncomeCycle)
+        val incomeDateRange: TextView = itemView.findViewById(R.id.txtIncomeDateRange)
     }
 
-    // ============================================================
-    // onCreateViewHolder()
-    // POV: Inflates the layout file for one row item
-    // ============================================================
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): IncomeViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_income, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_income, parent, false)
         return IncomeViewHolder(view)
     }
 
-    // ============================================================
-    // onBindViewHolder()
-    // POV: Populates the income row with the correct data
-    // ============================================================
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: IncomeViewHolder, position: Int) {
-        val income = incomeList[position]
-        holder.desc.text = income.description
-        holder.amount.text = "R%.2f".format(income.amount)
+        val item = incomeList[position]
+
+        holder.incomeDescription.text = item.description
+        holder.incomeAmount.text = "R%.2f".format(item.amount)
+
+        holder.incomeCycle.text = when (item.cycleType) {
+            CycleType.MONTHLY -> "Monthly"
+            CycleType.YEARLY -> "Yearly"
+            CycleType.ONCE -> "One-time"
+        }
+
+        val formatter = DateTimeFormatter.ofPattern("dd MMM yyyy")
+        val start = item.startDate.format(formatter)
+        val end = item.endDate?.format(formatter) ?: "Ongoing"
+
+        holder.incomeDateRange.text = "From $start to $end"
     }
 
-    // ============================================================
-    // getItemCount()
-    // POV: Returns total number of rows (income items) to display
-    // ============================================================
     override fun getItemCount(): Int = incomeList.size
+
+    fun updateList(newList: List<IncomeItem>) {
+        incomeList = newList
+        notifyDataSetChanged()
+    }
 }

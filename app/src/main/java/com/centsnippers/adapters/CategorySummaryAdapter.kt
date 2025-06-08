@@ -9,30 +9,29 @@ import com.centsnippers.R
 import com.centsnippers.models.CategoryItem
 
 class CategorySummaryAdapter(
-    private var categoryList: List<CategoryItem>
-) : RecyclerView.Adapter<CategorySummaryAdapter.CategoryViewHolder>() {
+    private val categoryList: List<CategoryItem>
+) : RecyclerView.Adapter<CategorySummaryAdapter.SummaryViewHolder>() {
 
-    inner class CategoryViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val title: TextView = view.findViewById(R.id.categoryTitleSummary)
-        val amount: TextView = view.findViewById(R.id.categorySpentSummary)
+    /// ViewHolder class holds the layout views for each summary card
+    inner class SummaryViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val title: TextView = itemView.findViewById(R.id.txtCategorySummaryTitle)
+        val value: TextView = itemView.findViewById(R.id.txtCategorySummaryValue)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CategoryViewHolder {
+    /// Inflates the layout for each summary item (item_category_summary.xml)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SummaryViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_category_summary, parent, false)
-        return CategoryViewHolder(view)
+        return SummaryViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: CategoryViewHolder, position: Int) {
-        val category = categoryList[position]
-        holder.title.text = category.title
-        holder.amount.text = "Spent: R%.2f".format(category.totalSpent)
+    /// Binds each category's name and total spent amount to the views
+    override fun onBindViewHolder(holder: SummaryViewHolder, position: Int) {
+        val item = categoryList[position]
+        holder.title.text = item.title
+        holder.value.text = "Spent: R%.2f".format(item.totalSpent)
     }
 
+    /// Returns the total number of items to display
     override fun getItemCount(): Int = categoryList.size
-
-    fun updateList(newList: List<CategoryItem>) {
-        categoryList = newList
-        notifyDataSetChanged()
-    }
 }

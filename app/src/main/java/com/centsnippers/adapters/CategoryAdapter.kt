@@ -7,21 +7,12 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.centsnippers.R
-import com.centsnippers.data.DatabaseHelper
 import com.centsnippers.models.CategoryItem
 
 class CategoryAdapter(
     private var categoryList: MutableList<CategoryItem>,
-    private val onDeleteClick: (Int) -> Unit
+    private val onDeleteClick: (CategoryItem) -> Unit // updated for document-based delete
 ) : RecyclerView.Adapter<CategoryAdapter.CategoryViewHolder>() {
-
-    private lateinit var dbHelper: DatabaseHelper
-    private var userId: Int = -1
-
-    fun setDependencies(helper: DatabaseHelper, uid: Int) {
-        dbHelper = helper
-        userId = uid
-    }
 
     inner class CategoryViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val title: TextView = view.findViewById(R.id.txtCategoryTitle)
@@ -59,10 +50,9 @@ class CategoryAdapter(
         holder.transactionCount.text = "$transactionCount transactions in this category"
 
         holder.btnDelete.setOnClickListener {
-            onDeleteClick(position)
+            onDeleteClick(item)
         }
     }
-
 
     override fun getItemCount(): Int = categoryList.size
 
@@ -72,3 +62,4 @@ class CategoryAdapter(
         notifyDataSetChanged()
     }
 }
+

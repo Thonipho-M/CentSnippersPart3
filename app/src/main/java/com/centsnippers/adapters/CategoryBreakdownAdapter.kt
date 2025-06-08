@@ -31,3 +31,4 @@ class CategoryBreakdownAdapter(
 
     override fun getItemCount(): Int = categories.size
 }
+

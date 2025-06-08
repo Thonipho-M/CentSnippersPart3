@@ -7,15 +7,15 @@ import android.os.Bundle
 import android.view.*
 import android.widget.*
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.centsnippers.R
 import com.centsnippers.adapters.CategoryAdapter
-import com.centsnippers.data.DatabaseHelper
 import com.centsnippers.databinding.FragmentCategoryBinding
+import com.centsnippers.utils.FirebaseCategoryService
 import com.centsnippers.models.CategoryItem
-import com.centsnippers.utils.SessionManager
 import com.centsnippers.MainActivity
-import androidx.navigation.fragment.findNavController
+import com.google.firebase.auth.FirebaseAuth
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -24,10 +24,9 @@ class CategoryFragment : Fragment() {
     private var _binding: FragmentCategoryBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var dbHelper: DatabaseHelper
-    private lateinit var sessionManager: SessionManager
     private lateinit var categoryAdapter: CategoryAdapter
-    private var userId: Int = -1
+    private val firebaseUserId: String?
+        get() = FirebaseAuth.getInstance().currentUser?.uid
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,43 +44,29 @@ class CategoryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        dbHelper = DatabaseHelper(requireContext())
-        sessionManager = SessionManager(requireContext())
-        userId = sessionManager.getUserId()
-
-        if (userId == -1) {
+        if (firebaseUserId == null) {
             Toast.makeText(requireContext(), "User not logged in", Toast.LENGTH_SHORT).show()
             return
         }
 
-        categoryAdapter = CategoryAdapter(mutableListOf()) { position -> deleteCategoryItem(position) }
-        categoryAdapter.setDependencies(dbHelper, userId)
+        categoryAdapter = CategoryAdapter(mutableListOf()) { item ->
+            deleteCategoryItem(item)
+        }
+
         binding.categoryRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.categoryRecyclerView.adapter = categoryAdapter
 
         setupDatePickers()
-
-        val calendar = Calendar.getInstance()
-        val currentMonth = calendar.get(Calendar.MONTH) + 1
-        val currentYear = calendar.get(Calendar.YEAR)
-
-        loadFilteredCategoriesForMonth(currentMonth, currentYear)
 
         binding.addCategoryFab.setOnClickListener {
             showAddCategoryDialog()
         }
 
         binding.applyFilterButton.setOnClickListener {
-            val start = binding.startDateInput.text.toString()
-            val end = binding.endDateInput.text.toString()
-
-
-            if (start.isBlank() || end.isBlank()) {
-                Toast.makeText(requireContext(), "Please select both dates", Toast.LENGTH_SHORT).show()
-            } else {
-                loadFilteredCategoriesForDateRange(start, end)
-            }
+            Toast.makeText(requireContext(), "Date filtering will be added later", Toast.LENGTH_SHORT).show()
         }
+
+        loadCategories()
     }
 
     private fun setupDatePickers() {
@@ -101,90 +86,12 @@ class CategoryFragment : Fragment() {
         }
     }
 
-    private fun loadFilteredCategoriesForDateRange(startDateStr: String, endDateStr: String) {
-        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        val startDate = sdf.parse(startDateStr)
-        val endDate = sdf.parse(endDateStr)
-
-        if (startDate == null || endDate == null) {
-            Toast.makeText(requireContext(), "Invalid dates", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val allCategories = dbHelper.getCategoriesForUser(userId)
-        val allTransactions = dbHelper.getTransactionsForUser(userId)
-
-
-        val filteredTransactions = allTransactions.filter { txn ->
-            try {
-                val txnDate = sdf.parse(txn.startDate)
-                txnDate != null && !txnDate.before(startDate) && !txnDate.after(endDate)
-            } catch (e: Exception) {
-                false
-            }
-        }
-
-
-        val updatedCategories = allCategories.map { category ->
-            val txns = filteredTransactions.filter { it.categoryId == category.id }
-            category.copy(
-                totalSpent = txns.sumOf { it.amount },
-                transactionCount = txns.size
-            )
-        }
-
-
-
-        categoryAdapter.updateList(updatedCategories)
-        val totalSpentFiltered = updatedCategories.sumOf { it.totalSpent }
-        binding.totalCategoryTextView.text = "Total Spent (Filtered): R%.2f".format(totalSpentFiltered)
-
-    }
-
     private fun loadCategories() {
-        val categories = dbHelper.getCategoriesForUser(userId)
-        categoryAdapter.updateList(categories)
-        val total = categories.sumOf { it.amount }
-        binding.totalCategoryTextView.text = "Total Budgeted: R%.2f".format(total)
-    }
-
-    private fun loadFilteredCategoriesForMonth(month: Int, year: Int) {
-        val allCategories = dbHelper.getCategoriesForUser(userId)
-        val allTransactions = dbHelper.getTransactionsForUser(userId)
-
-        val filteredTransactions = allTransactions.filter { txn ->
-            try {
-                val txnDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).parse(txn.startDate)
-                val txnCal = Calendar.getInstance().apply { time = txnDate!! }
-                val txnMonth = txnCal.get(Calendar.MONTH) + 1
-                val txnYear = txnCal.get(Calendar.YEAR)
-                txnMonth == month && txnYear == year
-            } catch (e: Exception) {
-                false
-            }
+        FirebaseCategoryService.getCategoriesForUser { categoryList ->
+            categoryAdapter.updateList(categoryList.toMutableList())
+            val total = categoryList.sumOf { it.amount }
+            binding.totalCategoryTextView.text = "Total Budgeted: R%.2f".format(total)
         }
-
-        val updatedCategories = allCategories.map { category ->
-            val txns = filteredTransactions.filter { it.categoryId == category.id }
-            category.copy(
-                totalSpent = txns.sumOf { it.amount },
-                transactionCount = txns.size
-            )
-        }
-
-        categoryAdapter.updateList(updatedCategories)
-        val totalSpentFiltered = updatedCategories.sumOf { it.totalSpent }
-        binding.totalCategoryTextView.text = "Total Spent (Filtered): R%.2f".format(totalSpentFiltered)
-
-
-
-        val monthName = SimpleDateFormat("MMMM", Locale.getDefault()).format(Calendar.getInstance().apply {
-            set(Calendar.MONTH, month - 1)
-        }.time)
-
-        binding.totalCategoryTextView.text =
-            "Total Budget for $monthName $year: R%.2f".format(updatedCategories.sumOf { it.amount })
-
     }
 
     private fun showAddCategoryDialog() {
@@ -201,10 +108,22 @@ class CategoryFragment : Fragment() {
                 val description = descInput.text.toString().trim()
                 val amount = amountInput.text.toString().trim().toDoubleOrNull()
 
-                if (title.isNotBlank() && amount != null) {
-                    val categoryItem = CategoryItem(0, userId, title, description, amount)
-                    dbHelper.insertCategory(categoryItem)
-                    loadCategories()
+                if (title.isNotBlank() && amount != null && firebaseUserId != null) {
+                    val categoryItem = CategoryItem(
+                        id = "",
+                        userId = firebaseUserId!!,
+                        title = title,
+                        description = description,
+                        amount = amount
+                    )
+                    FirebaseCategoryService.insertCategory(categoryItem) { success, error ->
+                        if (success) {
+                            Toast.makeText(requireContext(), "Category added", Toast.LENGTH_SHORT).show()
+                            loadCategories()
+                        } else {
+                            Toast.makeText(requireContext(), "Error: $error", Toast.LENGTH_LONG).show()
+                        }
+                    }
                 } else {
                     Toast.makeText(requireContext(), "Please fill in all fields", Toast.LENGTH_SHORT).show()
                 }
@@ -213,13 +132,9 @@ class CategoryFragment : Fragment() {
             .show()
     }
 
-    private fun deleteCategoryItem(position: Int) {
-        val categoryList = dbHelper.getCategoriesForUser(userId)
-        if (position in categoryList.indices) {
-            val item = categoryList[position]
-            dbHelper.deleteCategory(item.id)
-            loadCategories()
-        }
+    private fun deleteCategoryItem(item: CategoryItem) {
+        // Optional: implement delete in FirebaseCategoryService
+        Toast.makeText(requireContext(), "Delete not implemented yet for ${item.title}", Toast.LENGTH_SHORT).show()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -229,7 +144,7 @@ class CategoryFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.logoutButton -> {
-                sessionManager.clearSession()
+                FirebaseAuth.getInstance().signOut()
                 Toast.makeText(requireContext(), "Logged out", Toast.LENGTH_SHORT).show()
                 startActivity(Intent(requireActivity(), MainActivity::class.java))
                 requireActivity().finish()

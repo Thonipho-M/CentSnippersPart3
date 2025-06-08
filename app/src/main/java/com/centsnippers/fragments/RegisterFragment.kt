@@ -1,59 +1,50 @@
 package com.centsnippers.fragments
-import com.centsnippers.models.RegisterResult
+
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import com.centsnippers.R
-import com.centsnippers.data.DatabaseHelper
 import com.centsnippers.databinding.FragmentRegisterBinding
 import com.centsnippers.utils.SessionManager
+import com.google.firebase.auth.FirebaseAuth
+import com.centsnippers.R
 
 class RegisterFragment : Fragment() {
 
     private var _binding: FragmentRegisterBinding? = null
     private val binding get() = _binding!!
-    private lateinit var dbHelper: DatabaseHelper
+    private val auth: FirebaseAuth by lazy { FirebaseAuth.getInstance() }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentRegisterBinding.inflate(inflater, container, false)
-        dbHelper = DatabaseHelper(requireContext())
 
-        // Handle Register Button
         binding.registerButton.setOnClickListener {
-            val username = binding.usernameEditText.text.toString().trim()
+            val email = binding.usernameEditText.text.toString().trim()
             val password = binding.passwordEditText.text.toString().trim()
 
-            // Validate input
-            if (username.isEmpty() || password.isEmpty()) {
+            if (email.isEmpty() || password.isEmpty()) {
                 Toast.makeText(context, "Please fill in all fields", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
             if (password.length < 6) {
-                Toast.makeText(context, "Password should be at least 6 characters", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Password must be at least 6 characters", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            try {
-                val result = dbHelper.registerUser(username, password)
-
-                when (result) {
-                    is RegisterResult.Success -> {
-                        Toast.makeText(requireContext(), "Registration successful!", Toast.LENGTH_SHORT).show()
-                        // navigate to login or dashboard...
-                    }
-                    is RegisterResult.Failure -> {
-                        Toast.makeText(requireContext(), "Error: ${result.reason}", Toast.LENGTH_LONG).show()
+            auth.createUserWithEmailAndPassword(email, password)
+                .addOnSuccessListener {
+                    val user = it.user
+                    if (user != null) {
+                        SessionManager(requireContext()).saveUserSession(user.uid)
+                        Toast.makeText(requireContext(), "Registration successful", Toast.LENGTH_SHORT).show()
+                        findNavController().navigate(R.id.action_registerFragment_to_dashboardFragment)
                     }
                 }
-
-            } catch (e: Exception) {
-                Toast.makeText(context, "An error occurred: ${e.message}", Toast.LENGTH_LONG).show()
-            }
+                .addOnFailureListener { e ->
+                    Toast.makeText(context, "Registration failed: ${e.message}", Toast.LENGTH_LONG).show()
+                }
         }
 
         return binding.root

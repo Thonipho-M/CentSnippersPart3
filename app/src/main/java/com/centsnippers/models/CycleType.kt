@@ -1,11 +1,12 @@
 // models/CycleType.kt
 package com.centsnippers.models
+
 // ===========================================
 // CycleType.kt — ENUM
-// Purpose: Controls how often income recurs — monthly or yearly
+// Purpose: Controls how often income recurs — once, monthly or yearly
 // ===========================================
-// Used in IncomeItem to define recurrence behavior
 enum class CycleType {
+    ONCE,
     MONTHLY,
     YEARLY
 }

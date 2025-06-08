@@ -1,13 +1,13 @@
 package com.centsnippers.models
 
 data class TransactionItem(
-    val id: Int = 0,
-    val userId: Int,
-    val categoryId: Int,
-    val title: String,
-    val description: String,
-    val amount: Double,
-    val startDate: String,
-    val endDate: String,
+    val id: String = "",
+    val userId: String = "",
+    val type: String = "expense",
+    val categoryId: Int,         // Firestore category document ID
+    val title: String = "",
+    val description: String = "",
+    val amount: Double = 0.0,
+    val Date: String = "",
     val imageUrl: String? = null
 )

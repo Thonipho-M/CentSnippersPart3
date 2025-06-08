@@ -30,27 +30,6 @@ class DatabaseHelper(context: Context) :
         private const val COL_USERNAME = "username"
         private const val COL_PASSWORD = "password"
         // ==============================================
-        // CATEGORIIES TABLE CONSTANTS
-        // ==============================================
-        private const val TABLE_CATEGORIES = "categories"
-        private const val COL_CATEGORY_ID = "id"
-        private const val COL_CATEGORY_USER_ID = "userId"
-        private const val COL_CATEGORY_TITLE = "title"
-        private const val COL_CATEGORY_DESCRIPTION = "description"
-        private const val COL_CATEGORY_AMOUNT = "amount"
-        // ==============================================
-        // TRANSACTIONS TABLE CONSTANTS
-        // ==============================================
-        private const val TABLE_TRANSACTIONS = "transactions"
-        private const val COL_TRANSACTION_ID = "id"
-        private const val COL_TRANSACTION_USER_ID = "userId"
-        private const val COL_TRANSACTION_CATEGORY_ID = "categoryId"
-        private const val COL_TRANSACTION_TITLE = "title"
-        private const val COL_TRANSACTION_DESCRIPTION = "description"
-        private const val COL_TRANSACTION_AMOUNT = "amount"
-        private const val COL_TRANSACTION_START = "startDate"
-        private const val COL_TRANSACTION_END = "endDate"
-        private const val COL_TRANSACTION_IMAGE = "imageUri"
 
         // ==============================================
         // INCOME TABLE CONSTANTS
@@ -79,30 +58,7 @@ class DatabaseHelper(context: Context) :
             $COL_PASSWORD TEXT
         );""".trimIndent()
 
-        val createCategoriesTable = """
-        CREATE TABLE $TABLE_CATEGORIES (
-            $COL_CATEGORY_ID INTEGER PRIMARY KEY AUTOINCREMENT,
-            $COL_CATEGORY_USER_ID INTEGER,
-            $COL_CATEGORY_TITLE TEXT,
-            $COL_CATEGORY_DESCRIPTION TEXT,
-            $COL_CATEGORY_AMOUNT REAL,
-            FOREIGN KEY ($COL_CATEGORY_USER_ID) REFERENCES $TABLE_USERS($COL_USER_ID)
-        );""".trimIndent()
 
-        val createTransactionsTable = """
-        CREATE TABLE $TABLE_TRANSACTIONS (
-            $COL_TRANSACTION_ID INTEGER PRIMARY KEY AUTOINCREMENT,
-            $COL_TRANSACTION_USER_ID INTEGER,
-            $COL_TRANSACTION_CATEGORY_ID INTEGER,
-            $COL_TRANSACTION_TITLE TEXT,
-            $COL_TRANSACTION_DESCRIPTION TEXT,
-            $COL_TRANSACTION_AMOUNT REAL,
-            $COL_TRANSACTION_START TEXT,
-            $COL_TRANSACTION_END TEXT,
-            $COL_TRANSACTION_IMAGE TEXT,
-            FOREIGN KEY ($COL_TRANSACTION_USER_ID) REFERENCES $TABLE_USERS($COL_USER_ID),
-            FOREIGN KEY ($COL_TRANSACTION_CATEGORY_ID) REFERENCES $TABLE_CATEGORIES($COL_CATEGORY_ID)
-        );""".trimIndent()
 
         val createIncomeTable = """
         CREATE TABLE $TABLE_INCOME (
@@ -121,8 +77,6 @@ class DatabaseHelper(context: Context) :
 
         db.execSQL(createIncomeTable)
         db.execSQL(createUsersTable)
-        db.execSQL(createCategoriesTable)
-        db.execSQL(createTransactionsTable)
         Log.i(TAG, "Tables created successfully")
     }
 
@@ -130,8 +84,6 @@ class DatabaseHelper(context: Context) :
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         Log.w(TAG, "Upgrading DB from $oldVersion to $newVersion. Dropping all tables.")
         db.execSQL("DROP TABLE IF EXISTS $TABLE_USERS")
-        db.execSQL("DROP TABLE IF EXISTS $TABLE_CATEGORIES")
-        db.execSQL("DROP TABLE IF EXISTS $TABLE_TRANSACTIONS")
         onCreate(db)
     }
 
@@ -209,134 +161,6 @@ class DatabaseHelper(context: Context) :
         return userId
     }
 
-
-    // ==============================================
-    // CATEGORY FUNCTIONS
-    // ==============================================
-
-    // Adds a category for a user — title, description, amount limit
-    fun insertCategory(category: CategoryItem): Boolean {
-        val db = writableDatabase
-        val values = ContentValues().apply {
-            put(COL_CATEGORY_USER_ID, category.userId)
-            put(COL_CATEGORY_TITLE, category.title)
-            put(COL_CATEGORY_DESCRIPTION, category.description)
-            put(COL_CATEGORY_AMOUNT, category.amount)
-        }
-        val result = db.insert(TABLE_CATEGORIES, null, values)
-        Log.i(TAG, "User ${category.userId} created a new category: '${category.title}' | Insert ID: $result")
-        return result > 0
-    }
-
-    // Pull all categories for a given user ID
-    fun getCategoriesForUser(userId: Int): List<CategoryItem> {
-        val db = readableDatabase
-        val list = mutableListOf<CategoryItem>()
-        val cursor = db.rawQuery("SELECT * FROM $TABLE_CATEGORIES WHERE $COL_CATEGORY_USER_ID=?", arrayOf(userId.toString()))
-        if (cursor.moveToFirst()) {
-            do {
-                list.add(CategoryItem(
-                    id = cursor.getInt(cursor.getColumnIndexOrThrow(COL_CATEGORY_ID)),
-                    userId = cursor.getInt(cursor.getColumnIndexOrThrow(COL_CATEGORY_USER_ID)),
-                    title = cursor.getString(cursor.getColumnIndexOrThrow(COL_CATEGORY_TITLE)),
-                    description = cursor.getString(cursor.getColumnIndexOrThrow(COL_CATEGORY_DESCRIPTION)),
-                    amount = cursor.getDouble(cursor.getColumnIndexOrThrow(COL_CATEGORY_AMOUNT))
-                ))
-            } while (cursor.moveToNext())
-        }
-        cursor.close()
-        Log.d(TAG, "Fetched ${list.size} categories for user $userId")
-        return list
-    }
-
-    // ==============================================
-    // TRANSACTION FUNCTIONS
-    // ==============================================
-
-    // Adds a transaction with all fields including optional image
-    fun insertTransaction(userId: Int, categoryId: Int, title: String, description: String, amount: Double, startDate: String, endDate: String, imageUri: String?): Boolean {
-        val db = writableDatabase
-        val values = ContentValues().apply {
-            put(COL_TRANSACTION_USER_ID, userId)
-            put(COL_TRANSACTION_CATEGORY_ID, categoryId)
-            put(COL_TRANSACTION_TITLE, title)
-            put(COL_TRANSACTION_DESCRIPTION, description)
-            put(COL_TRANSACTION_AMOUNT, amount)
-            put(COL_TRANSACTION_START, startDate)
-            put(COL_TRANSACTION_END, endDate)
-            put(COL_TRANSACTION_IMAGE, imageUri)
-        }
-        val result = db.insert(TABLE_TRANSACTIONS, null, values)
-        Log.i(TAG, "Transaction saved. User: $userId | Title: '$title' | Amount: $amount | Success: ${result > 0}")
-        return result > 0
-    }
-
-    // Fetch all transactions for a user
-    fun getTransactionsForUser(userId: Int): List<TransactionItem> {
-        val db = readableDatabase
-        val list = mutableListOf<TransactionItem>()
-        val cursor = db.rawQuery("SELECT * FROM $TABLE_TRANSACTIONS WHERE $COL_TRANSACTION_USER_ID=?", arrayOf(userId.toString()))
-        if (cursor.moveToFirst()) {
-            do {
-                list.add(TransactionItem(
-                    id = cursor.getInt(cursor.getColumnIndexOrThrow(COL_TRANSACTION_ID)),
-                    userId = cursor.getInt(cursor.getColumnIndexOrThrow(COL_TRANSACTION_USER_ID)),
-                    categoryId = cursor.getInt(cursor.getColumnIndexOrThrow(COL_TRANSACTION_CATEGORY_ID)),
-                    title = cursor.getString(cursor.getColumnIndexOrThrow(COL_TRANSACTION_TITLE)),
-                    description = cursor.getString(cursor.getColumnIndexOrThrow(COL_TRANSACTION_DESCRIPTION)),
-                    amount = cursor.getDouble(cursor.getColumnIndexOrThrow(COL_TRANSACTION_AMOUNT)),
-                    startDate = cursor.getString(cursor.getColumnIndexOrThrow(COL_TRANSACTION_START)),
-                    endDate = cursor.getString(cursor.getColumnIndexOrThrow(COL_TRANSACTION_END)),
-                    imageUrl = cursor.getString(cursor.getColumnIndexOrThrow(COL_TRANSACTION_IMAGE))
-                ))
-            } while (cursor.moveToNext())
-        }
-        cursor.close()
-        Log.d(TAG, "User $userId — fetched ${list.size} transactions")
-        return list
-    }
-
-    // Remove category by ID (admin or user action)
-    fun deleteCategory(categoryId: Int): Boolean {
-        val db = writableDatabase
-        val result = db.delete(TABLE_CATEGORIES, "$COL_CATEGORY_ID=?", arrayOf(categoryId.toString()))
-        Log.i(TAG, "Category $categoryId deleted. Success: ${result > 0}")
-        return result > 0
-    }
-
-    // Filter transactions between two dates — inclusive or strict
-    fun getTransactionsForUserByDate(userId: Int, startDate: String, endDate: String, inclusive: Boolean): List<TransactionItem> {
-        val db = readableDatabase
-        val list = mutableListOf<TransactionItem>()
-        val query = if (inclusive) {
-            """SELECT * FROM $TABLE_TRANSACTIONS 
-               WHERE $COL_TRANSACTION_USER_ID=? 
-               AND ($COL_TRANSACTION_START <= ? AND $COL_TRANSACTION_END >= ?)"""
-        } else {
-            """SELECT * FROM $TABLE_TRANSACTIONS 
-               WHERE $COL_TRANSACTION_USER_ID=? 
-               AND $COL_TRANSACTION_START >= ? AND $COL_TRANSACTION_END <= ?"""
-        }
-        val cursor = db.rawQuery(query, arrayOf(userId.toString(), endDate, startDate))
-        if (cursor.moveToFirst()) {
-            do {
-                list.add(TransactionItem(
-                    id = cursor.getInt(cursor.getColumnIndexOrThrow(COL_TRANSACTION_ID)),
-                    userId = cursor.getInt(cursor.getColumnIndexOrThrow(COL_TRANSACTION_USER_ID)),
-                    categoryId = cursor.getInt(cursor.getColumnIndexOrThrow(COL_TRANSACTION_CATEGORY_ID)),
-                    title = cursor.getString(cursor.getColumnIndexOrThrow(COL_TRANSACTION_TITLE)),
-                    description = cursor.getString(cursor.getColumnIndexOrThrow(COL_TRANSACTION_DESCRIPTION)),
-                    amount = cursor.getDouble(cursor.getColumnIndexOrThrow(COL_TRANSACTION_AMOUNT)),
-                    startDate = cursor.getString(cursor.getColumnIndexOrThrow(COL_TRANSACTION_START)),
-                    endDate = cursor.getString(cursor.getColumnIndexOrThrow(COL_TRANSACTION_END)),
-                    imageUrl = cursor.getString(cursor.getColumnIndexOrThrow(COL_TRANSACTION_IMAGE))
-                ))
-            } while (cursor.moveToNext())
-        }
-        cursor.close()
-        Log.d(TAG, "User $userId — filtered ${list.size} transactions from $startDate to $endDate | Inclusive: $inclusive")
-        return list
-    }
 
 
     // ============================================================
