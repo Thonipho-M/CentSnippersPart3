@@ -110,7 +110,7 @@ class CategoryFragment : Fragment() {
 
                 if (title.isNotBlank() && amount != null && firebaseUserId != null) {
                     val categoryItem = CategoryItem(
-                        id = "",
+                        id = 0,
                         userId = firebaseUserId!!,
                         title = title,
                         description = description,

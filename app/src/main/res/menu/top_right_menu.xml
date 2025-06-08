@@ -10,10 +10,6 @@
         android:title="Help"/>
 
     <item
-        android:id="@+id/incomeFragment"
-        android:title="Income"/>
-
-    <item
         android:id="@+id/logoutButton"
         android:title="Logout" />
 

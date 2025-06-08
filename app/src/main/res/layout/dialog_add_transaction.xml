@@ -1,72 +1,77 @@
-<!-- dialog_add_transaction.xml (corrected) -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="24dp">
+    android:padding="16dp">
 
-    <EditText
-        android:id="@+id/inputTitle"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Title"
-        android:inputType="textCapWords" />
+        android:orientation="vertical">
 
-    <EditText
-        android:id="@+id/inputDescription"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Description"
-        android:inputType="textCapSentences" />
+        <EditText
+            android:id="@+id/inputTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Title"
+            android:inputType="text" />
 
-    <EditText
-        android:id="@+id/inputAmount"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Amount"
-        android:inputType="numberDecimal" />
+        <EditText
+            android:id="@+id/inputDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Description"
+            android:inputType="text" />
 
-    <EditText
-        android:id="@+id/inputStartDate"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Start Date"
-        android:focusable="false" />
+        <EditText
+            android:id="@+id/inputAmount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Amount"
+            android:inputType="numberDecimal" />
 
-    <EditText
-        android:id="@+id/inputEndDate"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="End Date"
-        android:focusable="false" />
+        <EditText
+            android:id="@+id/inputDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Date"
+            android:focusable="false" />
 
-    <Spinner
-        android:id="@+id/spinnerCategory"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:prompt="@string/select_category" />
+        <Spinner
+            android:id="@+id/spinnerCategory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
-    <ImageView
-        android:id="@+id/transactionImagePreview"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:scaleType="centerCrop"
-        android:visibility="gone"
-        android:layout_marginTop="8dp"
-        android:contentDescription="Transaction Image Preview" />
+        <ImageView
+            android:id="@+id/imagePreview"
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:scaleType="centerCrop"
+            android:visibility="gone"
+            android:layout_marginTop="8dp" />
 
-    <Button
-        android:id="@+id/selectImageButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Select Image" />
-    <Button
-        android:id="@+id/captureImageButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Take Photo"
-        android:layout_marginTop="8dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="12dp">
 
+            <Button
+                android:id="@+id/btnGallery"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:text="Gallery"
+                android:layout_height="wrap_content" />
 
-</LinearLayout>
+            <Button
+                android:id="@+id/btnCamera"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:text="Camera"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp" />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

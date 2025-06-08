@@ -34,7 +34,7 @@ class TransactionAdapter(
         holder.title.text = item.title
         holder.description.text = item.description
         holder.amount.text = "R%.2f".format(item.amount)
-        holder.dateRange.text = "From ${item.startDate} to ${item.endDate}"
+        holder.dateRange.text = "Date: ${item.Date}"
 
         if (!item.imageUrl.isNullOrEmpty()) {
             Glide.with(holder.itemView)
