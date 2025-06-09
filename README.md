@@ -1,5 +1,6 @@
-<!-- 🎥 Demo Video -->
-<!-- https://youtu.be/cVHNUFpoiaM-->
+Demo Video https://youtu.be/1JH_paXdQBg
+
+GitHub link: https://github.com/Thonipho-M/CentSnippersPart3.git
 
 # Cent Snippers
 
@@ -58,6 +59,11 @@ Main Features:
 - Clicking opens external link in browser
 - Dark-themed design with Glide-powered thumbnail loading
 - Fully integrated into the top-right menu under “Learn”
+
+### Education Page Setup
+- Learn page added for Users to access educational content
+- Article model and adapter setup so that user can view Articles
+- Video model and adapter setup so that user can watch Videos
 
 ---
 

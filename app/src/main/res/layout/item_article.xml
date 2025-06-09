@@ -3,38 +3,59 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
+<<<<<<< HEAD
     android:elevation="6dp"
     android:foreground="?android:attr/selectableItemBackground"
     android:backgroundTint="#FFFFFF"
     android:radius="12dp">
 
     <!-- Container layout for article info -->
+=======
+    android:elevation="4dp"
+    android:foreground="?android:attr/selectableItemBackground">
+
+>>>>>>> 37c624634abd3be351831d5d7260137885392c23
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="16dp">
 
+<<<<<<< HEAD
         <!-- Article Title -->
+=======
+>>>>>>> 37c624634abd3be351831d5d7260137885392c23
         <TextView
             android:id="@+id/articleTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Article Title"
             android:textStyle="bold"
+<<<<<<< HEAD
             android:textColor="#2E7D32"
             android:textSize="18sp"
             android:layout_marginBottom="4dp" />
 
         <!-- Article Summary -->
+=======
+            android:textSize="16sp" />
+
+>>>>>>> 37c624634abd3be351831d5d7260137885392c23
         <TextView
             android:id="@+id/articleSummary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Article Summary"
+<<<<<<< HEAD
             android:textColor="#555555"
             android:textSize="14sp"
             android:lineSpacingExtra="2dp" />
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>
+=======
+            android:layout_marginTop="4dp"
+            android:textSize="14sp" />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
+>>>>>>> 37c624634abd3be351831d5d7260137885392c23

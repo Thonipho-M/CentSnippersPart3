@@ -118,6 +118,11 @@ class MainActivity : AppCompatActivity() {
                 navController.navigate(R.id.helpPage)
                 true
             }
+            // When "Learn" is clicked
+            R.id.educationFragment -> {
+                navController.navigate(R.id.educationFragment)
+                true
+            }
             // Logout button clears the session and goes back to login screen
             R.id.logoutButton -> {
                 // Clear saved user ID and other login info
