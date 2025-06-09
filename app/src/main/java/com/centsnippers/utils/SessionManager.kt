@@ -35,5 +35,13 @@ class SessionManager(context: Context) {
     fun getIncome(): Double {
         return prefs.getFloat("USER_INCOME", 0.0f).toDouble()
     }
+    fun hasSeenTransactionNotice(): Boolean {
+        return prefs.getBoolean("seen_transaction_notice", false)
+    }
+
+    fun setSeenTransactionNotice() {
+        prefs.edit().putBoolean("seen_transaction_notice", true).apply()
+    }
+
 
 }

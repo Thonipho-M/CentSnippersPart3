@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- just adding all the brand colors I might use in the app to make it feel consistent -->
-
+    //orange
+    <color name="orange_800">#EF6C00</color>
     <!-- Off-Whites / Neutrals -->
     <color name="offWhite">#F8F5F0</color>
     <color name="cream">#FAF3E0</color>

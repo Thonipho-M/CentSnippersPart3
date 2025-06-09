@@ -5,7 +5,9 @@ data class CategoryItem(
     val userId: Int,
     val title: String,
     val description: String,
-    val amount: Double,
+    val goalAmount: Double,             // New: target category budget
+    val minSpend: Double? = null,       // Optional: budget lower bound
+    val maxSpend: Double? = null,       // Optional: budget upper bound
     var totalSpent: Double = 0.0,
     var transactionCount: Int = 0
 )

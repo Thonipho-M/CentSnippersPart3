@@ -11,6 +11,13 @@
         android:layout_height="wrap_content"
         android:hint="Title"
         android:inputType="textCapWords" />
+    <Spinner
+        android:id="@+id/spinnerTransactionType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:prompt="@string/select_type" />
+
 
     <EditText
         android:id="@+id/inputDescription"
@@ -30,15 +37,9 @@
         android:id="@+id/inputStartDate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Start Date"
+        android:hint="Date"
         android:focusable="false" />
 
-    <EditText
-        android:id="@+id/inputEndDate"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="End Date"
-        android:focusable="false" />
 
     <Spinner
         android:id="@+id/spinnerCategory"
@@ -61,12 +62,20 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Select Image" />
+
     <Button
         android:id="@+id/captureImageButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Take Photo"
         android:layout_marginTop="8dp" />
+    <CheckBox
+        android:id="@+id/checkboxConfirmFields"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="I confirm all fields are correct"
+        android:paddingTop="12dp" />
+
 
 
 </LinearLayout>

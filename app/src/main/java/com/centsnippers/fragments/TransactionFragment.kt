@@ -11,6 +11,9 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.centsnippers.R
+import android.text.TextWatcher
+import android.text.Editable
+
 import com.centsnippers.adapters.TransactionAdapter
 import com.centsnippers.data.DatabaseHelper
 import com.centsnippers.databinding.FragmentTransactionBinding
@@ -18,298 +21,453 @@ import com.centsnippers.models.TransactionItem
 import com.centsnippers.utils.SessionManager
 import com.centsnippers.models.*
 import java.util.*
-//Add the top right menu
-
 import android.widget.Toast
-import android.content.Intent
 import android.util.Log
 import java.text.SimpleDateFormat
-import androidx.navigation.fragment.findNavController
-import com.centsnippers.MainActivity
 import java.io.File
 import androidx.core.content.FileProvider
-
-// TransactionFragment.kt
-// This fragment handles all the logic for viewing, adding, and filtering user transactions.
-// It manages image capture, gallery selection, and passes data to the adapter.
-
+/// Fragment responsible for displaying and managing transactions.
+/// Sets up RecyclerView, handles date filters, and supports adding transactions with images.
 class TransactionFragment : Fragment() {
 
-    // Fragment binding + helpers
+    // UI and logic setup
     private lateinit var binding: FragmentTransactionBinding
     private lateinit var dbHelper: DatabaseHelper
     private lateinit var sessionManager: SessionManager
     private lateinit var transactionAdapter: TransactionAdapter
 
-    // Image capture and selection URIs
+    private var selectedType: String = "expense" // default value for safety
+
+    // uris for images (gallery or camera)
     private var selectedImageUri: Uri? = null
     private var capturedImageUri: Uri? = null
 
-    // Misc variables
+    // tracks selected category + user ID
     private var selectedCategoryId: Int = -1
     private var userId: Int = -1
+
+    // Holds the transaction currently being edited (if any)
+    private var editedTransaction: TransactionItem? = null
+
+    private var fullTransactionList: List<TransactionItem> = listOf()
+// allowing search through all data in transaction
+    private var categoryMap: Map<Int, String> = mapOf()
+
+
+    // hold preview image widget
     private lateinit var imagePreview: ImageView
 
-    // Handle gallery image selection
+    /// Handles image selection from gallery and previews it inside dialog
     private val imagePickerLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
         selectedImageUri = uri
         if (::imagePreview.isInitialized && uri != null) {
-            Glide.with(this)
-                .load(uri)
-                .into(imagePreview)
+            Glide.with(this).load(uri).into(imagePreview)
             imagePreview.visibility = View.VISIBLE
-            Log.d("TransactionFragment", "Image selected from gallery: $uri")
         }
+        Log.d("TransactionFragment.imagePickerLauncher", "Image selected from gallery: $uri")
     }
-    // Ask permission for camera use
+
+    /// Requests camera permission and launches camera if granted
     private val cameraPermissionLauncher = registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted ->
         if (isGranted) {
-            Log.d("TransactionFragment", "Camera permission granted. Launching camera.")
             launchCamera()
+            Log.d("TransactionFragment.cameraPermissionLauncher", "Camera permission granted, launching camera")
         } else {
-            Toast.makeText(requireContext(), "Camera permission is required to take photos.", Toast.LENGTH_SHORT).show()
-            Log.w("TransactionFragment", "Camera permission denied by user.")
+            Toast.makeText(requireContext(), "Camera permission is required", Toast.LENGTH_SHORT).show()
+            Log.d("TransactionFragment.cameraPermissionLauncher", "Camera permission denied")
         }
     }
 
-
-    // Handle camera image capture
+    /// Launches camera and processes image once taken
     private val cameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
         if (success && ::imagePreview.isInitialized && capturedImageUri != null) {
-            Glide.with(this)
-                .load(capturedImageUri)
-                .into(imagePreview)
+            Glide.with(this).load(capturedImageUri).into(imagePreview)
             selectedImageUri = capturedImageUri
             imagePreview.visibility = View.VISIBLE
-            Log.d("TransactionFragment", "Camera image captured: $capturedImageUri")
-        } else {
-            Log.w("TransactionFragment", "Camera capture failed or cancelled")
+            Log.d("TransactionFragment.cameraLauncher", "Photo captured and preview loaded")
         }
     }
 
-    // Called when the fragment is being created. Sets up recycler, listeners, and loads user data.
+    /// Main view initialization for the fragment. Sets up adapter, loads data and listeners.
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        Log.d("TransactionFragment", "onCreateView called")
-
         binding = FragmentTransactionBinding.inflate(inflater, container, false)
         dbHelper = DatabaseHelper(requireContext())
         sessionManager = SessionManager(requireContext())
         userId = sessionManager.getUserId()
-        setHasOptionsMenu(true)
 
+        // Handle edge case where user session is missing
         if (userId == -1) {
             Toast.makeText(requireContext(), "User not logged in", Toast.LENGTH_SHORT).show()
-            Log.w("TransactionFragment", "userId was -1. Cannot proceed.")
+            Log.d("TransactionFragment.onCreateView", "No valid user session found")
             return binding.root
         }
 
-        transactionAdapter = TransactionAdapter(mutableListOf(), dbHelper)
+        // Setup transaction list
+        transactionAdapter = TransactionAdapter(mutableListOf(), dbHelper) { item ->
+            editTransactionItem(item)
+        }
+
         binding.transactionRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.transactionRecyclerView.adapter = transactionAdapter
 
-        loadTransactions()
+        // ===== AUTO-APPLY CURRENT MONTH FILTER =====
+        val calendar = Calendar.getInstance()
+
+// Start of month: 01/MM/yyyy
+        calendar.set(Calendar.DAY_OF_MONTH, 1)
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+        val startOfMonth = calendar.time
+
+// End of month: last day of current month
+        calendar.set(Calendar.DAY_OF_MONTH, calendar.getActualMaximum(Calendar.DAY_OF_MONTH))
+        val endOfMonth = calendar.time
+
+        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val startDateStr = sdf.format(startOfMonth)
+        val endDateStr = sdf.format(endOfMonth)
+
+// Pre-fill the UI fields
+        binding.startDateInput.setText(startDateStr)
+        binding.endDateInput.setText(endDateStr)
+
+// Trigger the filtered transaction load
+        applySearchAndFilters(startDateStr, endDateStr, "")
+
+
+        binding.inputSearchTransaction.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                val query = s.toString().trim().lowercase(Locale.getDefault())
+                val start = binding.startDateInput.text.toString()
+                val end = binding.endDateInput.text.toString()
+                applySearchAndFilters(start, end, query)
+            }
+
+
+        })
+
+        Log.d("TransactionFragment", "Applied default filter for: $startDateStr to $endDateStr")
+// ===========================================
+
         setupDatePickers()
 
-        // Floating action button to open the add transaction dialog
-        binding.addTransactionFab.setOnClickListener {
-            showAddTransactionDialog()
-        }
-
-        // Filter button clicked
+        // Button: Add new transaction
         binding.applyFilterButton.setOnClickListener {
             val start = binding.startDateInput.text.toString()
             val end = binding.endDateInput.text.toString()
-
+            val query = binding.inputSearchTransaction.text.toString().trim().lowercase(Locale.getDefault())
+            Log.d("TransactionFragment", "Button clicked")
             if (start.isBlank() || end.isBlank()) {
-                Toast.makeText(requireContext(), "Please select both dates", Toast.LENGTH_SHORT).show()
-                Log.w("TransactionFragment", "Start or end date blank when filtering")
+                Toast.makeText(requireContext(), "Pick both dates", Toast.LENGTH_SHORT).show()
             } else {
-                loadFilteredTransactions(start, end)
+                applySearchAndFilters(start, end, query)
             }
         }
 
+        binding.addTransactionFab.setOnClickListener {
+            Log.d("TransactionFragment", "FAB clicked")
+            showAddTransactionDialog()
+
+            Toast.makeText(requireContext(), "Add Transaction FAB clicked", Toast.LENGTH_SHORT).show()
+        }
+
+
+
+
+        Log.d("TransactionFragment.onCreateView", "TransactionFragment view created and initialized")
         return binding.root
     }
 
-    // Loads all transactions for the logged-in user
+    /// Loads all user transactions from the database and displays in RecyclerView.
     private fun loadTransactions() {
-        Log.d("TransactionFragment", "Loading all transactions for user $userId")
         val transactions = dbHelper.getTransactionsForUser(userId)
         transactionAdapter.updateList(transactions)
+
+        Log.d("TransactionFragment.loadTransactions", "Loaded ${transactions.size} transactions for user $userId")
     }
 
-    // Sets up start and end date pickers
+    /// Enables the calendar date picker inputs for filtering transactions.
     private fun setupDatePickers() {
-        Log.d("TransactionFragment", "Setting up date pickers")
-        val calendar = Calendar.getInstance()
+        val cal = Calendar.getInstance()
 
+        // Start date picker setup
         binding.startDateInput.setOnClickListener {
-            DatePickerDialog(requireContext(), { _, year, month, day ->
-                binding.startDateInput.setText(String.format("%02d/%02d/%04d", day, month + 1, year))
-            }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
+            DatePickerDialog(requireContext(), { _, y, m, d ->
+                binding.startDateInput.setText("%02d/%02d/%04d".format(d, m + 1, y))
+            }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show()
         }
 
+        // End date picker setup
         binding.endDateInput.setOnClickListener {
-            DatePickerDialog(requireContext(), { _, year, month, day ->
-                binding.endDateInput.setText(String.format("%02d/%02d/%04d", day, month + 1, year))
-            }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
+            DatePickerDialog(requireContext(), { _, y, m, d ->
+                binding.endDateInput.setText("%02d/%02d/%04d".format(d, m + 1, y))
+            }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show()
         }
+
+        Log.d("TransactionFragment.setupDatePickers", "Date pickers initialized")
     }
 
-    // Filters transactions by date range
-    private fun loadFilteredTransactions(startDate: String, endDate: String) {
-        Log.d("TransactionFragment", "Filtering transactions from $startDate to $endDate")
+    /// Applies date range filtering + text search in a single pass.
+/// Called whenever user updates date or search input.
+    private fun applySearchAndFilters(startDate: String, endDate: String, query: String) {
         val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         val start = sdf.parse(startDate)
         val end = sdf.parse(endDate)
 
-        val allTransactions = dbHelper.getTransactionsForUser(userId)
+        val all = dbHelper.getTransactionsForUser(userId)
+        val categories = dbHelper.getCategoriesForUser(userId)
+        categoryMap = categories.associateBy({ it.id }, { it.title.lowercase(Locale.getDefault()) })
 
-        val filtered = allTransactions.filter {
-            val txnStart = sdf.parse(it.startDate)
-            val txnEnd = sdf.parse(it.endDate)
-            txnStart != null && txnEnd != null && !txnEnd.before(start) && !txnStart.after(end)
+        val filtered = all.filter {
+            try {
+                val txnDate = sdf.parse(it.Date)
+                val dateValid = txnDate != null && !txnDate.before(start) && !txnDate.after(end)
+
+                val titleMatch = it.title.lowercase(Locale.getDefault()).contains(query)
+                val descMatch = it.description.lowercase(Locale.getDefault()).contains(query)
+                val categoryMatch = categoryMap[it.categoryId]?.contains(query) == true
+
+                dateValid && (titleMatch || descMatch || categoryMatch)
+            } catch (e: Exception) {
+                Log.e("TransactionFragment", "Error filtering transaction '${it.title}'", e)
+                false
+            }
         }
+
+        fullTransactionList = filtered
+        transactionAdapter.updateList(filtered)
+
+        // Update summary text
+        val calendar = Calendar.getInstance()
+        val currentYear = calendar.get(Calendar.YEAR)
+        val monthName = SimpleDateFormat("MMMM", Locale.getDefault()).format(calendar.time)
+        val total = filtered.sumOf { it.amount }
+        binding.totalSpentTextView.text = "Total Spent for $monthName $currentYear: R%.2f".format(total)
+
+        Log.d("TransactionFragment", "Search+Filter applied: ${filtered.size} transactions shown")
+    }
+
+
+    /// Filters transactions within the selected date range and updates the list.
+    private fun loadFilteredTransactions(startDate: String, endDate: String) {
+        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val start = sdf.parse(startDate)
+        val end = sdf.parse(endDate)
+
+        val all = dbHelper.getTransactionsForUser(userId)
+        val categories = dbHelper.getCategoriesForUser(userId)
+        categoryMap = categories.associateBy({ it.id }, { it.title.lowercase(Locale.getDefault()) })
+
+        val filtered = all.filter {
+            try {
+                val txnDate = sdf.parse(it.Date)
+                txnDate != null && !txnDate.before(start) && !txnDate.after(end)
+            } catch (e: Exception) {
+                Log.e("TransactionFragment.loadFilteredTransactions", "Error parsing date for txn: ${it.Date}", e)
+                false
+            }
+        }
+        fullTransactionList = filtered // store full list for search
+
 
         transactionAdapter.updateList(filtered)
         binding.transactionRecyclerView.adapter?.notifyDataSetChanged()
 
-        val totalSpent = filtered.sumOf { it.amount }
-        binding.totalSpentTextView.text = "Total Spent: R%.2f".format(totalSpent)
+        // Get current month and year from system calendar
+        val calendar = Calendar.getInstance()
+        val currentYear = calendar.get(Calendar.YEAR)
+        val monthName = SimpleDateFormat("MMMM", Locale.getDefault()).format(calendar.time)
+        val total = filtered.sumOf { it.amount }
+        binding.totalSpentTextView.text = "Total Spent for $monthName $currentYear: R%.2f".format(total)
+
+        Log.d("TransactionFragment.loadFilteredTransactions", "Filtered ${filtered.size} transactions from ${all.size} total")
+    }
+    /// Initiates editing of a transaction's category only
+    private fun editTransactionItem(item: TransactionItem) {
+        // Store item in fragment memory
+        editedTransaction = item
+
+        Log.d("TransactionFragment.editTransactionItem", "Editing transaction ID=${item.id} | Only category is editable")
+
+        // Open the dialog in edit mode
+        showAddTransactionDialog(isEdit = true)
     }
 
-    // Displays a dialog for creating a new transaction
-    private fun showAddTransactionDialog() {
-        Log.d("TransactionFragment", "Opening Add Transaction Dialog")
+
+    /// Shows a form dialog allowing users to add a new transaction (with image support).
+    /// Dynamically fills dropdowns from DB, lets user pick/capture image, and inserts the transaction on confirmation.
+    private fun showAddTransactionDialog(isEdit: Boolean = false) {
+        // Inflate custom dialog layout
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add_transaction, null)
 
+        // Get references to input fields and spinners
         val titleInput = dialogView.findViewById<EditText>(R.id.inputTitle)
+        val typeSpinner = dialogView.findViewById<Spinner>(R.id.spinnerTransactionType)
         val descriptionInput = dialogView.findViewById<EditText>(R.id.inputDescription)
         val amountInput = dialogView.findViewById<EditText>(R.id.inputAmount)
-        val startDateInput = dialogView.findViewById<EditText>(R.id.inputStartDate)
-        val endDateInput = dialogView.findViewById<EditText>(R.id.inputEndDate)
+        val dateInput = dialogView.findViewById<EditText>(R.id.inputStartDate)
         val spinnerCategory = dialogView.findViewById<Spinner>(R.id.spinnerCategory)
+        val confirmCheckbox = dialogView.findViewById<CheckBox>(R.id.checkboxConfirmFields)
+
+
+        // Image preview and buttons for gallery or camera
         imagePreview = dialogView.findViewById(R.id.transactionImagePreview)
         val imageButton = dialogView.findViewById<Button>(R.id.selectImageButton)
-        val captureImageButton = dialogView.findViewById<Button>(R.id.captureImageButton)
+        val captureButton = dialogView.findViewById<Button>(R.id.captureImageButton)
 
-        // Trigger camera
-        captureImageButton.setOnClickListener {
-            Log.d("TransactionFragment", "Checking camera permission...")
-            cameraPermissionLauncher.launch(android.Manifest.permission.CAMERA)
-        }
+        // Populate transaction type spinner
+        val typeOptions = listOf("Expense", "Refund")
+        val typeAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, typeOptions)
+        typeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        typeSpinner.adapter = typeAdapter
 
-
-        // Populate categories into dropdown
+        // Populate category spinner from database
         val categories = dbHelper.getCategoriesForUser(userId)
+        categoryMap = categories.associateBy({ it.id }, { it.title.lowercase(Locale.getDefault()) })
+
         val categoryTitles = categories.map { it.title }
         val categoryIds = categories.map { it.id }
+        val categoryAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, categoryTitles)
+        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerCategory.adapter = categoryAdapter
 
-        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, categoryTitles)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        spinnerCategory.adapter = adapter
-
+        // Handle category selection
         spinnerCategory.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
                 selectedCategoryId = categoryIds[position]
             }
+            override fun onNothingSelected(parent: AdapterView<*>) { selectedCategoryId = -1 }
+        }
+
+        // Handle transaction type selection
+        typeSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                selectedType = parent.getItemAtPosition(position).toString().lowercase(Locale.getDefault())
+            }
 
             override fun onNothingSelected(parent: AdapterView<*>) {
-                selectedCategoryId = -1
+                selectedType = "expense" // fallback value
             }
         }
 
-        // Open gallery to pick an image
-        imageButton.setOnClickListener {
-            imagePickerLauncher.launch("image/*")
+        // Launch gallery image picker
+        imageButton.setOnClickListener { imagePickerLauncher.launch("image/*") }
+
+        // Launch camera (after permission)
+        captureButton.setOnClickListener { cameraPermissionLauncher.launch(android.Manifest.permission.CAMERA) }
+        if (isEdit && editedTransaction != null) {
+            val txn = editedTransaction!!
+
+            titleInput.setText(txn.title)
+            descriptionInput.setText(txn.description)
+            amountInput.setText(txn.amount.toString())
+            dateInput.setText(txn.Date)
+
+            // Show image if available
+            if (!txn.imageUrl.isNullOrBlank()) {
+                imagePreview.visibility = View.VISIBLE
+                Glide.with(this).load(txn.imageUrl).into(imagePreview)
+                selectedImageUri = Uri.parse(txn.imageUrl)
+            }
+
+            // Set selected transaction type in spinner
+            val typeIndex = typeOptions.indexOfFirst { it.equals(txn.type, ignoreCase = true) }
+            if (typeIndex >= 0) typeSpinner.setSelection(typeIndex)
+
+            // Disable everything except category spinner
+            titleInput.isEnabled = false
+            descriptionInput.isEnabled = false
+            amountInput.isEnabled = false
+            dateInput.isEnabled = false
+            typeSpinner.isEnabled = false
+            imageButton.isEnabled = false
+            captureButton.isEnabled = false
         }
 
-        // Setup date pickers for the dialog
-        val calendar = Calendar.getInstance()
-        startDateInput.setOnClickListener {
+        // Date picker for transaction date
+        val cal = Calendar.getInstance()
+        dateInput.setOnClickListener {
             DatePickerDialog(requireContext(), { _, y, m, d ->
-                startDateInput.setText(String.format("%02d/%02d/%04d", d, m + 1, y))
-            }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
+                dateInput.setText("%02d/%02d/%04d".format(d, m + 1, y))
+            }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show()
         }
 
-        endDateInput.setOnClickListener {
-            DatePickerDialog(requireContext(), { _, y, m, d ->
-                endDateInput.setText(String.format("%02d/%02d/%04d", d, m + 1, y))
-            }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
-        }
-
-        // Create and show the dialog
-        AlertDialog.Builder(requireContext())
-            .setTitle("Add Transaction")
+        // Show dialog and handle Save/Cancel
+        val builder = AlertDialog.Builder(requireContext())
+            .setTitle(if (isEdit) "Edit Transaction Category" else "Add Transaction")
             .setView(dialogView)
-            .setPositiveButton("Save") { _, _ ->
-                val title = titleInput.text.toString().trim()
-                val description = descriptionInput.text.toString().trim()
-                val amount = amountInput.text.toString().toDoubleOrNull()
-                val startDate = startDateInput.text.toString().trim()
-                val endDate = endDateInput.text.toString().trim()
-                val imageUrl = selectedImageUri?.toString()
-
-                if (title.isNotBlank() && amount != null && selectedCategoryId != -1) {
-                    dbHelper.insertTransaction(
-                        userId, selectedCategoryId, title, description, amount,
-                        startDate, endDate, imageUrl
-                    )
-                    loadTransactions()
-                    Log.i("TransactionFragment", "Transaction saved successfully")
-                } else {
-                    Toast.makeText(requireContext(), "Please complete all fields", Toast.LENGTH_SHORT).show()
-                    Log.w("TransactionFragment", "User tried to save with missing fields")
-                }
-            }
+            .setPositiveButton("Save", null) // must be null to override later
             .setNegativeButton("Cancel", null)
-            .show()
-    }
 
-    // Helper method to launch the camera after permission is granted
-    private fun launchCamera() {
-        val imageFile = File(requireContext().getExternalFilesDir(null), "photo_${System.currentTimeMillis()}.jpg")
-        capturedImageUri = FileProvider.getUriForFile(requireContext(), "${requireContext().packageName}.provider", imageFile)
-        Log.d("TransactionFragment", "Camera intent URI prepared: $capturedImageUri")
-        cameraLauncher.launch(capturedImageUri)
-    }
+        val dialog = builder.create()
+        dialog.show()
 
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener {
+            val title = titleInput.text.toString().trim()
+            val type = selectedType
+            val desc = descriptionInput.text.toString().trim()
+            val amount = amountInput.text.toString().toDoubleOrNull()
+            val date = dateInput.text.toString().trim()
+            val img = selectedImageUri?.toString()
 
-    // Inflates the top-right menu (legacy)
-    @Deprecated("Using legacy menu method for now")
-    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
-        inflater.inflate(R.menu.top_right_menu, menu)
-        Log.d("TransactionFragment", "Top-right menu inflated")
-    }
+            // Confirm checkbox must be ticked
+            if (!confirmCheckbox.isChecked) {
+                Toast.makeText(requireContext(), "Please confirm all fields before saving", Toast.LENGTH_SHORT).show()
+                Log.d("TransactionFragment", "Save blocked: confirmation checkbox not ticked")
+                return@setOnClickListener
+            }
 
-    // Handles menu item selections (legacy)
-    @Deprecated("Using legacy menu method for now")
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        return when (item.itemId) {
-            R.id.logoutButton -> {
-                sessionManager.clearSession()
-                Toast.makeText(requireContext(), "Logged out", Toast.LENGTH_SHORT).show()
-                startActivity(Intent(requireActivity(), MainActivity::class.java))
-                requireActivity().finish()
-                Log.i("TransactionFragment", "User logged out")
-                true
+            // Field validation
+            if (title.isNotBlank() && amount != null && selectedCategoryId != -1 && date.isNotBlank()) {
+                if (isEdit && editedTransaction != null) {
+                    // Call updateTransaction() (already implemented)
+                    // Only update category for the existing transaction
+                    val success = dbHelper.updateTransactionCategory(
+                        transactionId = editedTransaction!!.id,
+                        newCategoryId = selectedCategoryId
+                    )
+
+                    if (success) {
+                        Log.d("TransactionFragment", "Transaction category updated successfully for ID=${editedTransaction!!.id}")
+                        Toast.makeText(requireContext(), "Transaction category updated", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Log.e("TransactionFragment", "Failed to update category for ID=${editedTransaction!!.id}")
+                        Toast.makeText(requireContext(), "Failed to update transaction", Toast.LENGTH_SHORT).show()
+                    }
+
+                } else {
+                    // Insert transaction
+                    dbHelper.insertTransaction(userId, selectedCategoryId, type, title, desc, amount, date, img)
+                }
+
+                loadTransactions()
+                dialog.dismiss()
+                Log.d("TransactionFragment", "Transaction saved successfully")
+            } else {
+                Toast.makeText(requireContext(), "Please fill out all fields correctly", Toast.LENGTH_SHORT).show()
+                Log.d("TransactionFragment", "Save blocked: invalid input")
             }
-            R.id.goalsFragment -> {
-                Toast.makeText(requireContext(), "Goals clicked", Toast.LENGTH_SHORT).show()
-                Log.d("TransactionFragment", "Goals nav triggered")
-                true
-            }
-            R.id.rewardsFragment -> {
-                Toast.makeText(requireContext(), "Rewards clicked", Toast.LENGTH_SHORT).show()
-                Log.d("TransactionFragment", "Rewards nav triggered")
-                true
-            }
-            R.id.helpPage -> {
-                Toast.makeText(requireContext(), "Help clicked", Toast.LENGTH_SHORT).show()
-                Log.d("TransactionFragment", "Help nav triggered")
-                true
-            }
-            else -> super.onOptionsItemSelected(item)
         }
+
     }
+    /// Launches camera intent and prepares a file destination to store the captured image.
+    /// Stores image URI in memory and fires the camera launcher with that path.
+    private fun launchCamera() {
+        // Create file location for new image with a unique timestamp
+        val file = File(requireContext().getExternalFilesDir(null), "photo_${System.currentTimeMillis()}.jpg")
+
+        // Convert file to content URI using FileProvider
+        capturedImageUri = FileProvider.getUriForFile(requireContext(), "${requireContext().packageName}.provider", file)
+
+        // Trigger camera with URI
+        cameraLauncher.launch(capturedImageUri)
+
+        Log.d("TransactionFragment.launchCamera", "Camera launched in TransactionFragment using function launchCamera with file: ${file.absolutePath}")
+    }
+
 }
+

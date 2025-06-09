@@ -32,14 +32,25 @@
             android:textColor="#666666"
             android:layout_marginTop="4dp" />
 
-        <!-- Budget vs Spent -->
+        <!-- Budget Summary -->
         <TextView
             android:id="@+id/txtCategoryAmounts"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="Goal: R0.00"
             android:textSize="14sp"
             android:layout_marginTop="6dp"
             android:textColor="@android:color/black" />
+
+        <!-- Min/Max Goals -->
+        <TextView
+            android:id="@+id/txtMinMax"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Min: R0.00 | Max: R0.00"
+            android:textSize="13sp"
+            android:textColor="@android:color/darker_gray"
+            android:layout_marginTop="2dp" />
 
         <!-- Remaining or Overbudget -->
         <TextView
@@ -50,6 +61,7 @@
             android:layout_marginTop="2dp"
             android:textColor="@android:color/holo_red_dark" />
 
+
         <!-- Transactions Count -->
         <TextView
             android:id="@+id/txtCategoryTransactionCount"
@@ -58,7 +70,16 @@
             android:textSize="14sp"
             android:layout_marginTop="4dp"
             android:textColor="@android:color/darker_gray" />
-
+        <!-- Edit Button -->
+        <ImageButton
+            android:id="@+id/btnEditCategory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Edit Income"
+            android:src="@android:drawable/ic_menu_edit"
+            android:padding="8dp" />
         <!-- Delete Button -->
         <ImageButton
             android:id="@+id/btnDelete"

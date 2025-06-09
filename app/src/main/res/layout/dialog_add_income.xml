@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- dialog_add_income.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialogIncomeRoot"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <!-- Once-off Checkbox -->
+    <CheckBox
+        android:id="@+id/checkboxOnceOff"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Once-off"
+        android:layout_marginBottom="12dp" />
+
+    <!-- Description Input -->
+    <EditText
+        android:id="@+id/inputIncomeDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Income Description"
+        android:inputType="textCapSentences" />
+
+    <!-- Amount Input -->
+    <EditText
+        android:id="@+id/inputIncomeAmount"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Amount (R)"
+        android:inputType="numberDecimal"
+        android:layout_marginTop="12dp" />
+    <!-- Start Date Input (shared) -->
+    <EditText
+        android:id="@+id/inputStartDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Income Date (dd/MM/yyyy)"
+        android:focusable="false"
+        android:layout_marginTop="12dp" />
+
+    <!-- Conditional Recurring Fields Wrapper -->
+    <LinearLayout
+        android:id="@+id/layoutRecurringFields"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/inputEndDate"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:hint="End Date (optional)"
+                android:focusable="false" />
+
+            <ImageButton
+                android:id="@+id/btnClearEndDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@android:drawable/ic_menu_close_clear_cancel"
+                android:contentDescription="Clear End Date"
+                android:tooltipText="Clear" />
+        </LinearLayout>
+        <!-- Cycle Type Spinner -->
+        <Spinner
+            android:id="@+id/spinnerCycleType"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp" />
+    </LinearLayout>
+
+
+
+</LinearLayout>

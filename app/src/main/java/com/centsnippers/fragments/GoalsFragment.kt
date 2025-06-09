@@ -66,7 +66,7 @@ class GoalsFragment : Fragment() {
         val allTransactions = dbHelper.getTransactionsForUser(userId)
         val filteredTransactions = allTransactions.filter { txn ->
             try {
-                val txnDate = sdf.parse(txn.startDate)
+                val txnDate = sdf.parse(txn.Date)
                 val txnCal = Calendar.getInstance().apply { time = txnDate!! }
                 txnCal.get(Calendar.MONTH) == currentMonth &&
                         txnCal.get(Calendar.YEAR) == currentYear

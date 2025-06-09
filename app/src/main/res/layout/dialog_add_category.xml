@@ -19,12 +19,28 @@
         android:inputType="textCapSentences" />
 
     <EditText
-        android:id="@+id/inputCategoryAmount"
+        android:id="@+id/inputGoalAmount"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Amount (R)"
+        android:hint="Goal Amount (R)"
         android:inputType="numberDecimal"
         android:layout_marginTop="16dp" />
+
+    <EditText
+        android:id="@+id/inputMinSpend"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Min Spend (optional)"
+        android:inputType="numberDecimal"
+        android:layout_marginTop="8dp" />
+
+    <EditText
+        android:id="@+id/inputMaxSpend"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Max Spend (optional)"
+        android:inputType="numberDecimal"
+        android:layout_marginTop="8dp" />
 
     <ImageView
         android:id="@+id/imageCategoryPreview"
@@ -33,6 +49,4 @@
         android:scaleType="centerCrop"
         android:visibility="gone"
         android:layout_marginTop="8dp"/>
-
-
 </LinearLayout>

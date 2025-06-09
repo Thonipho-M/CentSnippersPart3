@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<!-- item_income.xml -->
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -7,29 +7,94 @@
     android:background="@android:color/white"
     app:cardElevation="4dp"
     app:cardCornerRadius="12dp">
-<!-- ===================================================
-     item_income.xml
-     Purpose: One row in RecyclerView for an income item
-     =================================================== -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="12dp">
 
-    <TextView
-        android:id="@+id/incomeDescription"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Income Description"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        android:orientation="vertical"
+        android:padding="16dp">
 
-    <TextView
-        android:id="@+id/incomeAmount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="R0.00"
-        android:textSize="14sp" />
-</LinearLayout>
+        <!-- Top Row: Description + Badge -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="8dp">
+
+            <!-- Description -->
+            <TextView
+                android:id="@+id/incomeDescription"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:textColor="@android:color/black" />
+
+            <!-- Badge -->
+            <TextView
+                android:id="@+id/incomeTag"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_tag_badge"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:paddingTop="4dp"
+                android:paddingBottom="4dp"
+                android:text="ONCE-OFF"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <!-- Amount -->
+        <TextView
+            android:id="@+id/incomeAmount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="@android:color/black" />
+
+        <!-- Cycle Start Info -->
+        <TextView
+            android:id="@+id/incomeCycle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="13sp"
+            android:textColor="#666666"
+            android:layout_marginTop="4dp" />
+
+        <!-- Date Range -->
+        <TextView
+            android:id="@+id/incomeDates"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="13sp"
+            android:textColor="@android:color/darker_gray"
+            android:layout_marginTop="2dp" />
+        <!-- Edit Button -->
+        <ImageButton
+            android:id="@+id/btnEditIncome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Edit Income"
+            android:src="@android:drawable/ic_menu_edit"
+            android:padding="8dp" />
+
+        <!-- Delete Icon -->
+        <ImageButton
+            android:id="@+id/btnDeleteIncome"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Delete Income"
+            android:src="@android:drawable/ic_menu_delete"
+            android:padding="8dp" />
+
+    </LinearLayout>
+
 </androidx.cardview.widget.CardView>

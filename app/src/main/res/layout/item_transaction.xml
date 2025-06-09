@@ -12,6 +12,30 @@
         android:layout_height="wrap_content"
         android:padding="12dp">
 
+        <!-- Colored square for transaction type -->
+        <View
+            android:id="@+id/typeIndicator"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:layout_marginEnd="8dp"
+            android:background="@android:color/holo_red_dark"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <!-- Transaction Title -->
+        <TextView
+            android:id="@+id/transactionTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@android:color/black"
+            android:maxLines="1"
+            android:ellipsize="end"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/typeIndicator"
+            app:layout_constraintEnd_toStartOf="@id/imagePreview" />
+
         <!-- Transaction Image -->
         <ImageView
             android:id="@+id/imagePreview"
@@ -23,20 +47,6 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <!-- Title -->
-        <TextView
-            android:id="@+id/transactionTitle"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@android:color/black"
-            android:maxLines="1"
-            android:ellipsize="end"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/imagePreview" />
-
         <!-- Amount -->
         <TextView
             android:id="@+id/transactionAmount"
@@ -46,7 +56,7 @@
             android:textStyle="bold"
             android:textColor="@android:color/holo_green_dark"
             app:layout_constraintTop_toBottomOf="@id/transactionTitle"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@id/typeIndicator"
             app:layout_constraintEnd_toStartOf="@id/imagePreview" />
 
         <!-- Description -->
@@ -59,7 +69,7 @@
             android:maxLines="2"
             android:ellipsize="end"
             app:layout_constraintTop_toBottomOf="@id/transactionAmount"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@id/typeIndicator"
             app:layout_constraintEnd_toStartOf="@id/imagePreview" />
 
         <!-- Category -->
@@ -72,7 +82,7 @@
             android:textColor="#666666"
             android:maxLines="1"
             app:layout_constraintTop_toBottomOf="@id/transactionDescription"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@id/typeIndicator"
             app:layout_constraintEnd_toStartOf="@id/imagePreview" />
 
         <!-- Dates -->
@@ -84,9 +94,21 @@
             android:textColor="#999999"
             android:maxLines="1"
             app:layout_constraintTop_toBottomOf="@id/transactionCategory"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@id/typeIndicator"
             app:layout_constraintEnd_toStartOf="@id/imagePreview"
             app:layout_constraintBottom_toBottomOf="parent" />
 
+
     </androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- Edit Transaction Button -->
+    <ImageButton
+        android:id="@+id/btnEditTransaction"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:contentDescription="Edit Transaction"
+        android:src="@android:drawable/ic_menu_edit"
+        android:padding="8dp" />
+
 </androidx.cardview.widget.CardView>

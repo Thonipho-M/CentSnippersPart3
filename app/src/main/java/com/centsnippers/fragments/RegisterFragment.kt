@@ -43,9 +43,18 @@ class RegisterFragment : Fragment() {
 
                 when (result) {
                     is RegisterResult.Success -> {
+                        //  1. Get user ID immediately after successful registration
+                        val userId = dbHelper.validateUser(username, password)
+
+                        //  2. Save login session
+                        SessionManager(requireContext()).saveUserSession(userId)
+
                         Toast.makeText(requireContext(), "Registration successful!", Toast.LENGTH_SHORT).show()
-                        // navigate to login or dashboard...
+
+                        // 3. Navigate to dashboard or home screen
+                        findNavController().navigate(R.id.dashboardFragment)
                     }
+
                     is RegisterResult.Failure -> {
                         Toast.makeText(requireContext(), "Error: ${result.reason}", Toast.LENGTH_LONG).show()
                     }
