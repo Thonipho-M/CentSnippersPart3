@@ -27,6 +27,7 @@ import com.bumptech.glide.Glide
 import com.centsnippers.adapters.TransactionAdapter
 import com.centsnippers.data.DatabaseHelper
 import com.centsnippers.databinding.FragmentTransactionBinding
+import com.centsnippers.fragments.EducationFragment
 import com.centsnippers.models.TransactionItem
 import com.centsnippers.models.*
 import java.util.*
@@ -132,7 +133,23 @@ class MainActivity : AppCompatActivity() {
             }
 
             // Fallback if no menu item matches
+            R.id.educationFragment -> {
+                // Navigate to EducationFragment manually
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.nav_host_fragment, EducationFragment())
+                    .addToBackStack("Education")
+                    .commit()
+
+                // Hide bottom nav
+                binding.bottomNavView.visibility = View.GONE
+                return true
+            }
             else -> super.onOptionsItemSelected(item)
+
         }
     }
+    fun showBottomNavView() {
+        binding.bottomNavView.visibility = View.VISIBLE
+    }
+
 }

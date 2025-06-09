@@ -1,67 +1,128 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="24dp">
+    android:layout_height="wrap_content">
 
-    <EditText
-        android:id="@+id/inputCategoryTitle"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Category Title"
-        android:inputType="textCapWords" />
+        android:orientation="vertical"
+        android:padding="24dp">
 
-    <EditText
-        android:id="@+id/inputCategoryDescription"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Description"
-        android:inputType="textCapSentences" />
+        <!-- Category Title -->
+        <TextView android:text="Category Title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"/>
+        <EditText
+            android:id="@+id/inputCategoryTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="e.g. Groceries"
+            android:inputType="textCapWords" />
 
-    <EditText
-        android:id="@+id/inputGoalAmount"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Goal Amount (R)"
-        android:inputType="numberDecimal"
-        android:layout_marginTop="16dp" />
+        <!-- Description -->
+        <TextView android:text="Description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:textStyle="bold"/>
+        <EditText
+            android:id="@+id/inputCategoryDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Short summary"
+            android:inputType="textCapSentences" />
 
-    <EditText
-        android:id="@+id/inputMinSpend"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Min Spend (optional)"
-        android:inputType="numberDecimal"
-        android:layout_marginTop="8dp" />
-    <TextView
-        android:id="@+id/errorMinSpend"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@android:color/holo_red_dark"
-        android:textSize="12sp"
-        android:visibility="gone" />
+        <!-- Goal -->
+        <TextView android:text="Goal Amount (R)"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:textStyle="bold"/>
+        <EditText
+            android:id="@+id/inputGoalAmount"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="e.g. 1500"
+            android:inputType="numberDecimal" />
 
+        <!-- Min + Max Spend (Side by side) -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Optional Min and Max Spend"
+            android:textStyle="bold"
+            android:layout_marginTop="12dp"/>
 
-    <EditText
-        android:id="@+id/inputMaxSpend"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Max Spend (optional)"
-        android:inputType="numberDecimal"
-        android:layout_marginTop="8dp" />
-    <TextView
-        android:id="@+id/errorMaxSpend"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@android:color/holo_red_dark"
-        android:textSize="12sp"
-        android:visibility="gone" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            android:layout_marginTop="4dp">
 
-    <ImageView
-        android:id="@+id/imageCategoryPreview"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:scaleType="centerCrop"
-        android:visibility="gone"
-        android:layout_marginTop="8dp"/>
-</LinearLayout>
+            <EditText
+                android:id="@+id/inputMinSpend"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:hint="Min (R)"
+                android:inputType="numberDecimal"
+                android:layout_marginEnd="8dp" />
+
+            <EditText
+                android:id="@+id/inputMaxSpend"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:hint="Max (R)"
+                android:inputType="numberDecimal" />
+        </LinearLayout>
+
+        <!-- Error Feedback (optional) -->
+        <TextView
+            android:id="@+id/errorMinSpend"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/holo_red_dark"
+            android:textSize="12sp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/errorMaxSpend"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/holo_red_dark"
+            android:textSize="12sp"
+            android:visibility="gone" />
+
+        <!-- Color Picker Title -->
+        <TextView
+            android:id="@+id/colourPicker"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Select a Bar Color"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:paddingBottom="4dp" />
+
+        <!-- Dynamic color circles will be added here -->
+        <LinearLayout
+            android:id="@+id/colorPickerLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="4dp" />
+
+        <!-- Optional Image -->
+        <ImageView
+            android:id="@+id/imageCategoryPreview"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:visibility="gone"
+            android:layout_marginTop="16dp" />
+    </LinearLayout>
+</ScrollView>

@@ -9,13 +9,13 @@
     android:background="@color/offWhite"
     tools:context=".fragments.CategoryFragment">
 
-    <!-- Page Title -->
+    <!-- Header Title -->
     <TextView
         android:id="@+id/categoryTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Manage Your Categories"
-        android:textSize="20sp"
+        android:text="Manage Your Budgets"
+        android:textSize="22sp"
         android:textStyle="bold"
         android:textColor="@color/textPrimary"
         android:layout_marginTop="24dp"
@@ -23,19 +23,77 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- Filter Container -->
+    <!-- Toggle Filter Bar Visibility Button -->
+    <Button
+        android:id="@+id/toggleFilterButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Show Filter"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        android:backgroundTint="@color/leatherBrown"
+        app:layout_constraintTop_toBottomOf="@id/categoryTitle"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- Date Filter Bar -->
     <LinearLayout
-        android:id="@+id/filterContainer"
+        android:id="@+id/filterBar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="8dp"
         android:gravity="center_vertical"
-        app:layout_constraintTop_toBottomOf="@id/categoryTitle"
+        android:layout_marginTop="12dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/toggleFilterButton"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent">
 
-    <!-- Total Category Text -->
+        <EditText
+            android:id="@+id/startDateInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="Start Date"
+            android:focusable="false"
+            android:inputType="none"
+            android:backgroundTint="@color/leatherBrown"
+            android:padding="8dp"
+            android:textColor="@color/textPrimary"
+            android:textSize="14sp" />
+
+        <EditText
+            android:id="@+id/endDateInput"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:hint="End Date"
+            android:focusable="false"
+            android:inputType="none"
+            android:backgroundTint="@color/leatherBrown"
+            android:padding="8dp"
+            android:textColor="@color/textPrimary"
+            android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/applyFilterButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="Filter"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:backgroundTint="@color/leatherBrown"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp" />
+    </LinearLayout>
+
+
+
+    <!-- Total Category Budget Summary -->
     <TextView
         android:id="@+id/totalCategoryTextView"
         android:layout_width="wrap_content"
@@ -44,8 +102,8 @@
         android:textSize="18sp"
         android:textStyle="bold"
         android:textColor="@color/textPrimary"
-        android:layout_marginTop="8dp"
-        app:layout_constraintTop_toBottomOf="@id/filterContainer"
+        android:layout_marginTop="12dp"
+        app:layout_constraintTop_toBottomOf="@id/filterBar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
@@ -62,16 +120,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <!-- ViewPager2 for tab content -->
+    <!-- Tab View Content -->
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
         app:layout_constraintTop_toBottomOf="@id/tabLayout"
         app:layout_constraintBottom_toTopOf="@id/addCategoryFab"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginBottom="8dp" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- Floating Action Button -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton

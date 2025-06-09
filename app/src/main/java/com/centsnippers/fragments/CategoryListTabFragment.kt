@@ -14,10 +14,17 @@ import java.text.SimpleDateFormat
 import java.util.*
 import com.centsnippers.R
 import android.app.AlertDialog
+import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
+import android.os.Build
 import android.widget.EditText
 import android.view.LayoutInflater
 import android.view.View
 import android.util.Log
+import android.widget.LinearLayout
+import androidx.annotation.RequiresApi
+import java.time.temporal.ChronoUnit
+
 
 //interface to convery data from this fragment to categoyr fragment
 interface OnCategoryTotalCalculatedListener {
@@ -41,19 +48,37 @@ class CategoryListTabFragment : Fragment() {
 
 
 
+
+
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View {
+        Log.d("CategoryListTabFragment", "onCreateView() called")
         _binding = FragmentCategoryListTabBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        Log.d("CategoryListTabFragment", "onViewCreated() called")
         super.onViewCreated(view, savedInstanceState)
 
         dbHelper = DatabaseHelper(requireContext())
         sessionManager = SessionManager(requireContext())
         userId = sessionManager.getUserId()
+        // --- Pull latest date filter from CategoryFragment ---
+        (parentFragment as? CategoryFragment)?.let { parent ->
+            val start = parent.currentStartDate
+            val end = parent.currentEndDate
+
+            if (start != null && end != null) {
+                Log.d("CategoryListTabFragment", "Pulling date filter from parent: $start → $end")
+                applyDateFilter(start, end)
+            } else {
+                Log.d("CategoryListTabFragment", " No date filter found in parent — skipping")
+            }
+        }
+
 
         if (userId == -1) {
             Toast.makeText(requireContext(), "User not logged in", Toast.LENGTH_SHORT).show()
@@ -86,6 +111,9 @@ class CategoryListTabFragment : Fragment() {
         showAddCategoryDialog()
     }
 
+    fun setOnTotalCalculatedListener(listener: OnCategoryTotalCalculatedListener) {
+        this.listener = listener
+    }
 
 
     /// Loads all categories for the current user from the database and updates the UI.
@@ -93,6 +121,13 @@ class CategoryListTabFragment : Fragment() {
     private fun loadCategories() {
         // Retrieve all categories associated with the current user
         val categories = dbHelper.getCategoriesForUser(userId)
+        // Enrich each category with transaction count
+        categories.forEach { category ->
+            val spent = dbHelper.getTotalSpentForCategory(category)
+            category.totalSpent = spent
+            val count = dbHelper.getTransactionCountForCategory(category)
+            category.transactionCount = count
+        }
 
         // Update the RecyclerView adapter with the fetched list
         categoryAdapter.updateList(categories)
@@ -118,20 +153,49 @@ class CategoryListTabFragment : Fragment() {
     /// Displays a dialog for adding a new category to the user's profile.
 /// Collects title, description, and amount inputs, validates them, and saves to DB on confirmation.
     private fun showAddCategoryDialog(isEdit: Boolean = false) {
-        // Inflate the custom layout for the category input dialog
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add_category, null)
 
-
-
-        // Get references to the input fields inside the dialog layout
         val titleInput = dialogView.findViewById<EditText>(R.id.inputCategoryTitle)
         val descInput = dialogView.findViewById<EditText>(R.id.inputCategoryDescription)
         val goalInput = dialogView.findViewById<EditText>(R.id.inputGoalAmount)
         val minInput = dialogView.findViewById<EditText>(R.id.inputMinSpend)
         val maxInput = dialogView.findViewById<EditText>(R.id.inputMaxSpend)
+        val colorLayout = dialogView.findViewById<LinearLayout>(R.id.colorPickerLayout)
 
+        // Define available bar colors
+        val availableColors = listOf("#F44336", "#4CAF50", "#2196F3", "#FF9800", "#9C27B0", "#00BCD4")
 
-        // Pre-fill fields if editing an existing category
+        // Set default or edit-selected color
+        var selectedColorHex = editedCategory?.colorHex ?: availableColors[0]
+
+        // Dynamically inflate the color picker
+        colorLayout.removeAllViews()
+        for (color in availableColors) {
+            val circle = View(requireContext()).apply {
+                layoutParams = LinearLayout.LayoutParams(80, 80).apply {
+                    setMargins(12, 8, 12, 8)
+                }
+                background = GradientDrawable().apply {
+                    shape = GradientDrawable.OVAL
+                    setColor(Color.parseColor(color))
+                    setStroke(4, if (color == selectedColorHex) Color.BLACK else Color.TRANSPARENT)
+                }
+                tag = color
+                setOnClickListener {
+                    selectedColorHex = color
+                    for (i in 0 until colorLayout.childCount) {
+                        val v = colorLayout.getChildAt(i)
+                        (v.background as GradientDrawable).setStroke(
+                            4,
+                            if ((v.tag as String) == selectedColorHex) Color.BLACK else Color.TRANSPARENT
+                        )
+                    }
+                }
+            }
+            colorLayout.addView(circle)
+        }
+
+        // Pre-fill fields if editing
         if (isEdit && editedCategory != null) {
             titleInput.setText(editedCategory!!.title)
             descInput.setText(editedCategory!!.description)
@@ -140,10 +204,11 @@ class CategoryListTabFragment : Fragment() {
             maxInput.setText(editedCategory!!.maxSpend?.toString() ?: "")
             Log.d("CategoryFragment", "Pre-filling dialog with category ID=${editedCategory!!.id}")
         }
-        // Build and display the AlertDialog for adding a category
+
+        // Build dialog
         AlertDialog.Builder(requireContext())
-            .setTitle("Add Category") // Dialog title
-            .setView(dialogView) // Set the custom view with input fields
+            .setTitle(if (isEdit) "Edit Category" else "Add Category")
+            .setView(dialogView)
             .setPositiveButton("Save") { _, _ ->
                 val title = titleInput.text.toString().trim()
                 val description = descInput.text.toString().trim()
@@ -152,6 +217,15 @@ class CategoryListTabFragment : Fragment() {
                 val maxSpend = maxInput.text.toString().trim().toDoubleOrNull()
 
                 if (title.isNotBlank() && goalAmount != null) {
+                    if (minSpend != null && minSpend > goalAmount) {
+                        Toast.makeText(requireContext(), "Min spend must be < goal", Toast.LENGTH_SHORT).show()
+                        return@setPositiveButton
+                    }
+                    if (maxSpend != null && maxSpend < goalAmount) {
+                        Toast.makeText(requireContext(), "Max spend must be > goal", Toast.LENGTH_SHORT).show()
+                        return@setPositiveButton
+                    }
+
                     val categoryItem = CategoryItem(
                         id = editedCategory?.id ?: 0,
                         userId = userId,
@@ -159,24 +233,9 @@ class CategoryListTabFragment : Fragment() {
                         description = description,
                         goalAmount = goalAmount,
                         minSpend = minSpend,
-                        maxSpend = maxSpend
+                        maxSpend = maxSpend,
+                        colorHex = selectedColorHex
                     )
-                    // Enforce validation rules for min and max spend vs. goal amount
-                    if (goalAmount != null) {
-                        if (minSpend != null && minSpend >= goalAmount) {
-                            Toast.makeText(requireContext(), "CATEGORY CAN NOT BE CREATED: Min spend must be less than goal amount", Toast.LENGTH_SHORT).show()
-                            Log.w("CategoryListTabFragment", "Validation failed: minSpend=$minSpend >= goalAmount=$goalAmount")
-                            return@setPositiveButton
-                        }
-
-                        if (maxSpend != null && maxSpend <= goalAmount) {
-                            Toast.makeText(requireContext(), "CATEGORY CAN NOT BE CREATED: Max spend must be greater than goal amount", Toast.LENGTH_SHORT).show()
-                            Log.w("CategoryListTabFragment", "Validation failed: maxSpend=$maxSpend <= goalAmount=$goalAmount")
-                            return@setPositiveButton
-                        }
-                    }
-
-
 
                     val success = if (isEdit) {
                         dbHelper.updateCategory(categoryItem)
@@ -186,23 +245,20 @@ class CategoryListTabFragment : Fragment() {
 
                     if (success) {
                         Toast.makeText(requireContext(), "Category ${if (isEdit) "updated" else "added"}", Toast.LENGTH_SHORT).show()
-                        Log.i("CategoryFragment", "Category ${if (isEdit) "updated" else "added"}: ${categoryItem.title}")
+                        Log.i("CategoryFragment", "Category saved: ${categoryItem.title}")
                         loadCategories()
                     } else {
-                        Toast.makeText(requireContext(), "Failed to save category", Toast.LENGTH_SHORT).show()
-                        Log.w("CategoryFragment", "Failed to save category: ${categoryItem.title}")
+                        Toast.makeText(requireContext(), "Failed to save", Toast.LENGTH_SHORT).show()
                     }
-
-                    editedCategory = null // Reset edit mode after save
+                    editedCategory = null
                 } else {
-                    Toast.makeText(requireContext(), "Please fill in all fields", Toast.LENGTH_SHORT).show()
-                    Log.w("CategoryFragment", "Validation failed for saving category — title or amount invalid")
+                    Toast.makeText(requireContext(), "Missing title or goal", Toast.LENGTH_SHORT).show()
                 }
             }
-
-            .setNegativeButton("Cancel", null) // Cancel button closes dialog without action
-            .show() // Display the dialog
+            .setNegativeButton("Cancel", null)
+            .show()
     }
+
 
 
     /// Deletes a category from the database based on an item
@@ -230,7 +286,7 @@ class CategoryListTabFragment : Fragment() {
             .setTitle("Delete Category")
             .setMessage("Are you sure you want to delete the category '${item.title}'?")
             .setPositiveButton("Yes") { _, _ ->
-                val success = dbHelper.deleteCategory(categoryId)
+                val success = dbHelper.deleteCategory(item)
                 if (success) {
                     Toast.makeText(requireContext(), "Category deleted", Toast.LENGTH_SHORT).show()
                     Log.i("CategoryFragment", "Successfully deleted category ID=$categoryId | Title='${item.title}'")
@@ -253,14 +309,83 @@ class CategoryListTabFragment : Fragment() {
         showAddCategoryDialog(isEdit = true)
     }
 
-    fun setOnTotalCalculatedListener(callback: OnCategoryTotalCalculatedListener) {
-        listener = callback
-        // If we already calculated it, send it again
-        lastCalculatedTotal?.let {
-            listener?.onTotalCalculated(it)
-        }
-    }
 
+
+/// Applies date-based filtering to show only categories with transactions in that range
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun applyDateFilter(startDateStr: String, endDateStr: String) {
+        Log.d("CategoryListTabFragment", "applyDateFilter() called with $startDateStr to $endDateStr")
+        if (!::dbHelper.isInitialized) {
+            Log.w("CategoryListTabFragment", "applyDateFilter() called before dbHelper init — skipping")
+            return
+        }
+
+        if (userId == -1) {
+            Log.w("CategoryListTabFragment", "User ID invalid in applyDateFilter — skipping")
+            return
+        }
+
+
+        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        val start = sdf.parse(startDateStr)
+        val end = sdf.parse(endDateStr)
+        val daysBetween = ChronoUnit.DAYS.between(start.toInstant(), end.toInstant()) + 1
+        val dayFactor = ((daysBetween - 30).toDouble() / 100) + 1
+        Log.d("CategoryGraphTabFragment", "daysBetween=$daysBetween | dayFactor=$dayFactor")
+
+        if (start == null || end == null) {
+            Log.e("CategoryListTabFragment", "Invalid date inputs: $startDateStr / $endDateStr")
+            return
+        }
+
+        // Fetch all transactions once for efficiency
+        val allTransactions = dbHelper.getTransactionsForUser(userId)
+
+        // Fetch all categories
+        val allCategories = dbHelper.getCategoriesForUser(userId)
+
+        // Filter: keep categories that have ≥1 txn in date range
+        val filtered = allCategories.filter { category ->
+            allTransactions.any { txn ->
+                txn.categoryId == category.id && try {
+                    val txnDate = sdf.parse(txn.Date)
+                    Log.d("CategoryListTabFragment", "Txn='${txn.title}' | RawDate='${txn.Date}' | Parsed=$txnDate -----------------------")
+
+                    txnDate != null && !txnDate.before(start) && !txnDate.after(end)
+
+                } catch (e: Exception) {
+                    Log.e("CategoryListTabFragment", "Failed to parse txn date for '${txn.title}'", e)
+                    false
+                }
+            }
+        }
+
+        // Enrich each remaining category
+        filtered.forEach { category ->
+            val txns = allTransactions.filter { txn ->
+                txn.categoryId == category.id && try {
+                    val txnDate = sdf.parse(txn.Date)
+                    txnDate != null && !txnDate.before(start) && !txnDate.after(end)
+                } catch (e: Exception) {
+                    false
+                }
+            }
+
+            category.totalSpent = txns.sumOf { it.amount }
+            category.transactionCount = txns.size
+
+            Log.d("CategoryListTabFragment", "✔ Category='${category.title}' | Txns=${txns.size} | Total=R${category.totalSpent}")
+        }
+
+
+        // Update UI
+        categoryAdapter.updateList(filtered)
+        val total = filtered.sumOf { it.totalSpent }
+        listener?.onTotalCalculated(total)
+
+        Log.d("CategoryListTabFragment", "Filtered ${filtered.size} categories for range $startDateStr to $endDateStr")
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

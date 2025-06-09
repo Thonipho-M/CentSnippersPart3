@@ -52,6 +52,12 @@ class TransactionFragment : Fragment() {
     private var fullTransactionList: List<TransactionItem> = listOf()
 // allowing search through all data in transaction
     private var categoryMap: Map<Int, String> = mapOf()
+    private var selectedFilterCategoryId: Int = -1
+
+    //filter buttons
+    private var isDateFilterVisible = false
+    private var isCategoryFilterVisible = false
+
 
 
     // hold preview image widget
@@ -174,6 +180,60 @@ class TransactionFragment : Fragment() {
 
             Toast.makeText(requireContext(), "Add Transaction FAB clicked", Toast.LENGTH_SHORT).show()
         }
+        val categories = dbHelper.getCategoriesForUser(userId)
+        categoryMap = categories.associateBy({ it.id }, { it.title.lowercase(Locale.getDefault()) })
+
+        val categoryTitles = mutableListOf("All Categories")
+        val categoryIds = mutableListOf(-1)
+        categories.forEach {
+            categoryTitles.add(it.title)
+            categoryIds.add(it.id)
+        }
+
+        val categoryAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, categoryTitles)
+        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        binding.spinnerCategoryFilter.adapter = categoryAdapter
+
+        binding.spinnerCategoryFilter.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                selectedFilterCategoryId = categoryIds[position]
+                triggerCombinedFilter()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {
+                selectedFilterCategoryId = -1
+            }
+        }
+        binding.toggleDateFilterButton.setOnClickListener {
+            isDateFilterVisible = !isDateFilterVisible
+            binding.filterBar.visibility = if (isDateFilterVisible) View.VISIBLE else View.GONE
+            binding.toggleDateFilterButton.text = if (isDateFilterVisible) "Hide Date Filter" else "Date Filter"
+
+            if (!isDateFilterVisible) {
+                resetDateFiltersToDefault()
+            }
+        }
+
+        binding.toggleCategoryFilterButton.setOnClickListener {
+            isCategoryFilterVisible = !isCategoryFilterVisible
+            binding.categoryFilterBar.visibility = if (isCategoryFilterVisible) View.VISIBLE else View.GONE
+            binding.toggleCategoryFilterButton.text = if (isCategoryFilterVisible) "Hide Category Filter" else "Category Filter"
+
+            if (!isCategoryFilterVisible) {
+                selectedFilterCategoryId = -1
+                binding.spinnerCategoryFilter.setSelection(0) // Reset to "All Categories"
+                triggerCombinedFilter()
+            }
+        }
+
+        binding.hideDateFilterButton.setOnClickListener {
+            binding.toggleDateFilterButton.performClick()
+        }
+
+        binding.hideCategoryFilterButton.setOnClickListener {
+            binding.toggleCategoryFilterButton.performClick()
+        }
+
 
 
 
@@ -210,6 +270,93 @@ class TransactionFragment : Fragment() {
 
         Log.d("TransactionFragment.setupDatePickers", "Date pickers initialized")
     }
+
+    /// Re-applies all active filters: search query, date range, category ID
+    private fun triggerCombinedFilter() {
+        Log.d("TransactionFragment.triggerCombinedFilter", "Re-evaluating all filters...")
+
+        // Step 1: Extract current values from inputs
+        val startDateStr = binding.startDateInput.text.toString().trim()
+        val endDateStr = binding.endDateInput.text.toString().trim()
+        val searchQuery = binding.inputSearchTransaction.text.toString().trim().lowercase(Locale.getDefault())
+
+        // Step 2: Validate required date fields
+        if (startDateStr.isBlank() || endDateStr.isBlank()) {
+            Log.w("TransactionFragment.triggerCombinedFilter", "Start or End date is blank — skipping filter")
+            Toast.makeText(requireContext(), "Date range is invalid", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        try {
+            // Step 3: Parse date range safely
+            val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+            val startDate = sdf.parse(startDateStr)
+            val endDate = sdf.parse(endDateStr)
+
+            if (startDate == null || endDate == null) {
+                Log.w("TransactionFragment.triggerCombinedFilter", "Failed to parse dates")
+                return
+            }
+
+            // Step 4: Pull all transactions from DB
+            val allTransactions = dbHelper.getTransactionsForUser(userId)
+            val allCategories = dbHelper.getCategoriesForUser(userId)
+            categoryMap = allCategories.associateBy({ it.id }, { it.title.lowercase(Locale.getDefault()) })
+
+            // Step 5: Apply filters together
+            val filtered = allTransactions.filter { txn ->
+                try {
+                    val txnDate = sdf.parse(txn.Date)
+                    val isInRange = txnDate != null && !txnDate.before(startDate) && !txnDate.after(endDate)
+
+                    val matchesSearch = txn.title.lowercase(Locale.getDefault()).contains(searchQuery)
+                            || txn.description.lowercase(Locale.getDefault()).contains(searchQuery)
+                            || (categoryMap[txn.categoryId]?.contains(searchQuery) == true)
+
+                    val matchesCategory = selectedFilterCategoryId == -1 || txn.categoryId == selectedFilterCategoryId
+
+                    isInRange && matchesSearch && matchesCategory
+                } catch (e: Exception) {
+                    Log.e("TransactionFragment.triggerCombinedFilter", "Error filtering txn '${txn.title}'", e)
+                    false
+                }
+            }
+
+            // Step 6: Update UI
+            fullTransactionList = filtered
+            transactionAdapter.updateList(filtered)
+
+            val calendar = Calendar.getInstance()
+            val monthName = SimpleDateFormat("MMMM", Locale.getDefault()).format(calendar.time)
+            val year = calendar.get(Calendar.YEAR)
+            val total = filtered.sumOf { it.amount }
+
+            binding.totalSpentTextView.text = "Total Spent for $monthName $year: R%.2f".format(total)
+
+            Log.i("TransactionFragment.triggerCombinedFilter", "Final filter applied | ${filtered.size} transactions shown")
+
+        } catch (e: Exception) {
+            Log.e("TransactionFragment.triggerCombinedFilter", "Unexpected crash during filtering", e)
+        }
+    }
+
+    private fun resetDateFiltersToDefault() {
+        val cal = Calendar.getInstance()
+        val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+
+        // 1st of current month
+        cal.set(Calendar.DAY_OF_MONTH, 1)
+        val start = sdf.format(cal.time)
+        binding.startDateInput.setText(start)
+
+        // End of current month
+        cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH))
+        val end = sdf.format(cal.time)
+        binding.endDateInput.setText(end)
+
+        triggerCombinedFilter()
+    }
+
 
     /// Applies date range filtering + text search in a single pass.
 /// Called whenever user updates date or search input.
@@ -300,7 +447,7 @@ class TransactionFragment : Fragment() {
 
     /// Shows a form dialog allowing users to add a new transaction (with image support).
     /// Dynamically fills dropdowns from DB, lets user pick/capture image, and inserts the transaction on confirmation.
-    private fun showAddTransactionDialog(isEdit: Boolean = false) {
+    fun showAddTransactionDialog(isEdit: Boolean = false) {
         // Inflate custom dialog layout
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add_transaction, null)
 

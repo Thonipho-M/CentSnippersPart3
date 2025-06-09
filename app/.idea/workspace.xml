@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="809be046-3797-4ce1-bc2e-6227976fd975" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../CentSnippers" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/.idea/AndroidProjectSystem.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/.idea/compiler.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/.idea/deploymentTargetSelector.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/.idea/gradle.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/.idea/kotlinc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/.idea/migrations.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/.idea/runConfigurations.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/build.gradle.kts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/proguard-rules.pro" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/androidTest/java/com/centsnippers/ExampleInstrumentedTest.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/main/AndroidManifest.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/main/java/com/centsnippers/MainActivity.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/main/java/com/centsnippers/adapters/BudgetAdapter.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/main/java/com/centsnippers/adapters/GoalsAdapter.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/main/java/com/centsnippers/fragments/AnalyticsFragment.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/main/java/com/centsnippers/fragments/BudgetFragment.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/main/java/com/centsnippers/fragments/DashboardFragment.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/main/java/com/centsnippers/fragments/GoalsFragment.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/main/java/com/centsnippers/fragments/LoginFragment.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/main/java/com/centsnippers/fragments/RewardsFragment.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/main/java/com/centsnippers/fragments/TransactionFragment.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/main/java/com/centsnippers/models/BudgetItem.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/main/java/com/centsnippers/models/Goals.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/main/java/com/centsnippers/ui/theme/Color.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/main/java/com/centsnippers/ui/theme/Theme.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/main/java/com/centsnippers/ui/theme/Type.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/main/res/drawable/ic_launcher_background.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/main/res/drawable/ic_launcher_foreground.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/main/res/drawable/logo.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/main/res/layout/activity_main.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/main/res/layout/fragment_analytics.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/main/res/layout/fragment_budget.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/main/res/layout/fragment_dashboard.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/main/res/layout/fragment_goals.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/main/res/layout/fragment_login.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/main/res/layout/fragment_rewards.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/main/res/layout/fragment_transaction.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/main/res/layout/item_budget.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/main/res/layout/item_goal.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/main/res/menu/bottom_nav_menu.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/main/res/mipmap-hdpi/ic_launcher.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/main/res/mipmap-hdpi/ic_launcher_round.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/main/res/mipmap-mdpi/ic_launcher.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/main/res/mipmap-mdpi/ic_launcher_round.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/main/res/mipmap-xhdpi/ic_launcher.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/main/res/mipmap-xhdpi/ic_launcher_round.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/main/res/mipmap-xxhdpi/ic_launcher.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/main/res/mipmap-xxxhdpi/ic_launcher.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/main/res/navigation/nav_graph.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/main/res/values/colors.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/main/res/values/strings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/main/res/values/themes.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/main/res/xml/backup_rules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/main/res/xml/data_extraction_rules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/app/src/test/java/com/centsnippers/ExampleUnitTest.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/build.gradle.kts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/gradle.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/gradle/libs.versions.toml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/gradle/wrapper/gradle-wrapper.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/gradlew" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/gradlew.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippers.v2/CentSnippers/CentSnippers/settings.gradle.kts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/.idea/AndroidProjectSystem.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/.idea/compiler.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/.idea/deploymentTargetSelector.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/.idea/gradle.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/.idea/kotlinc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/.idea/migrations.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/.idea/misc.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/.idea/runConfigurations.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/.idea/vcs.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/build.gradle.kts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/proguard-rules.pro" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/androidTest/java/com/centsnippers/ExampleInstrumentedTest.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/main/AndroidManifest.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/main/java/com/centsnippers/MainActivity.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/main/java/com/centsnippers/adapters/BudgetAdapter.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/main/java/com/centsnippers/adapters/GoalsAdapter.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/main/java/com/centsnippers/fragments/AnalyticsFragment.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/main/java/com/centsnippers/fragments/BudgetFragment.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/main/java/com/centsnippers/fragments/DashboardFragment.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/main/java/com/centsnippers/fragments/GoalsFragment.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/main/java/com/centsnippers/fragments/LoginFragment.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/main/java/com/centsnippers/fragments/RewardsFragment.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/main/java/com/centsnippers/fragments/TransactionFragment.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/main/java/com/centsnippers/models/BudgetItem.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/main/java/com/centsnippers/models/Goals.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/main/java/com/centsnippers/ui/theme/Color.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/main/java/com/centsnippers/ui/theme/Theme.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/main/java/com/centsnippers/ui/theme/Type.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/main/res/drawable/ic_launcher_background.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/main/res/drawable/ic_launcher_foreground.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/main/res/layout/activity_main.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/main/res/layout/fragment_analytics.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/main/res/layout/fragment_budget.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/main/res/layout/fragment_dashboard.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/main/res/layout/fragment_goals.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/main/res/layout/fragment_login.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/main/res/layout/fragment_rewards.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/main/res/layout/fragment_transaction.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/main/res/layout/item_budget.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/main/res/layout/item_goal.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/main/res/menu/bottom_nav_menu.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/main/res/mipmap-hdpi/ic_launcher.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/main/res/mipmap-hdpi/ic_launcher_round.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/main/res/mipmap-mdpi/ic_launcher.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/main/res/mipmap-mdpi/ic_launcher_round.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/main/res/mipmap-xhdpi/ic_launcher.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/main/res/mipmap-xhdpi/ic_launcher_round.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/main/res/mipmap-xxhdpi/ic_launcher.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/main/res/mipmap-xxhdpi/ic_launcher_round.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/main/res/mipmap-xxxhdpi/ic_launcher.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/main/res/mipmap-xxxhdpi/ic_launcher_round.webp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/main/res/navigation/nav_graph.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/main/res/values/colors.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/main/res/values/strings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/main/res/values/themes.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/main/res/xml/backup_rules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/main/res/xml/data_extraction_rules.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/app/src/test/java/com/centsnippers/ExampleUnitTest.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/build.gradle.kts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/gradle.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/gradle/libs.versions.toml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/gradle/wrapper/gradle-wrapper.jar" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/gradle/wrapper/gradle-wrapper.properties" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/gradlew" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/gradlew.bat" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CentSnippersv1/CentSnippers/settings.gradle.kts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/centsnippers/adapters/CategoryAdapter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/centsnippers/adapters/CategoryAdapter.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/centsnippers/data/DatabaseHelper.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/centsnippers/data/DatabaseHelper.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/centsnippers/fragments/CategoryFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/centsnippers/fragments/CategoryFragment.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/centsnippers/fragments/CategoryGraphTabFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/centsnippers/fragments/CategoryGraphTabFragment.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/centsnippers/fragments/CategoryListTabFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/centsnippers/fragments/CategoryListTabFragment.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/centsnippers/fragments/IncomeFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/centsnippers/fragments/IncomeFragment.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/centsnippers/models/CategoryItem.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/centsnippers/models/CategoryItem.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/res/layout/dialog_add_category.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/res/layout/dialog_add_category.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/res/layout/fragment_category.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/res/layout/fragment_category.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/res/layout/fragment_category_graph_tab.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/res/layout/fragment_category_graph_tab.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/res/layout/item_category.xml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/res/layout/item_category.xml" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "ST10394807"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/Thonipho-M/CentSnippersPart3.git",
+    "accountId": "d4ca7063-ca18-4186-a6f5-c0ffabc69e36"
+  }
+}]]></component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 2
+}]]></component>
+  <component name="ProjectId" id="2yHH7t3ms5hrzlrSEiNNInbDlgt" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "android.gradle.sync.needed": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "git-widget-placeholder": "workspace",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/brayd/Documents/Varsity/3rd year/PROG7313/Group/Part 2/CentSnippers v2 OFFICIAL/CentSnippers v2.5"
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="809be046-3797-4ce1-bc2e-6227976fd975" name="Changes" comment="" />
+      <created>1749484414506</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1749484414506</updated>
+    </task>
+    <servers />
+  </component>
+</project>

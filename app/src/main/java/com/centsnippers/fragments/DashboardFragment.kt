@@ -2,9 +2,13 @@ package com.centsnippers.fragments
 
 // Usual imports to handle layout, nav, and utils
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.*
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.Spinner
 import com.centsnippers.models.CycleType
 import android.widget.Toast
 import androidx.fragment.app.Fragment
@@ -19,6 +23,12 @@ import com.centsnippers.utils.SessionManager
 import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.util.*
+import com.github.mikephil.charting.data.*
+import com.github.mikephil.charting.components.XAxis
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
+import androidx.core.content.ContextCompat
+import com.centsnippers.fragments.*
+
 
 /// Handles UI and data logic for displaying user's financial summary.
 /// Loads income, expenses, top categories, and recent transactions for current month.
@@ -32,6 +42,9 @@ class DashboardFragment : Fragment() {
     private lateinit var dbHelper: DatabaseHelper
     private lateinit var sessionManager: SessionManager
     private var userId: Int = -1 // Will hold the ID of the logged-in user
+    private var selectedMonth: Int = Calendar.getInstance().get(Calendar.MONTH) + 1
+    private var selectedYear: Int = Calendar.getInstance().get(Calendar.YEAR)
+
 
     /// Inflates the layout for this fragment using ViewBinding.
     /// Required before interacting with UI elements.
@@ -55,6 +68,8 @@ class DashboardFragment : Fragment() {
         val currentMonth = monthFormat.format(Date())
         binding.dashboardTitle.text = "Snapshot for $currentMonth"
 
+
+
         if (userId == -1) {
             binding.totalIncomeText.text = "Not logged in"
             Log.e("DashboardFragment.onViewCreated", "Attempted dashboard access without valid session")
@@ -67,6 +82,8 @@ class DashboardFragment : Fragment() {
     /// Loads all dashboard data: active incomes, expenses, and transaction breakdown.
     /// Filters data to current month and updates UI accordingly.
     private fun loadDashboardData() {
+        binding.spendingGoalBarChart.clear()
+
         val netExpense = 0.0
         var totalHold = 0.0
         Log.d("DashboardFragment.loadDashboardData", "Started loading dashboard data for user $userId")
@@ -159,24 +176,37 @@ class DashboardFragment : Fragment() {
 
         val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
 
-        val filteredTransactions = allTransactions.filter {
+        totalHold = 0.0
+
+        val filteredTransactions = allTransactions.filter { txn ->
             try {
-                val txnDate = sdf.parse(it.Date)
-                val isInRange = txnDate != null && !txnDate.before(startOfMonth.time) && !txnDate.after(endOfMonth.time)
-                var holder = 0.0
-                if (isInRange) {
-                    when (it.type.lowercase(Locale.getDefault())) {
-                        "expense" -> holder += it.amount
-                        "refund" -> holder -= it.amount
+                val txnDate = sdf.parse(txn.Date)
+                val inRange = txnDate != null && !txnDate.before(startOfMonth.time) && !txnDate.after(endOfMonth.time)
+
+                if (inRange) {
+                    when (txn.type.lowercase(Locale.getDefault())) {
+                        "expense" -> {
+                            totalHold += txn.amount
+                            Log.d("DashboardFragment", "Included expense: '${txn.title}' | Amount=R${txn.amount}")
+                        }
+                        "refund" -> {
+                            totalHold -= txn.amount
+                            Log.d("DashboardFragment", "Included refund: '${txn.title}' | Amount=-R${txn.amount}")
+                        }
+                        else -> {
+                            Log.d("DashboardFragment", "Ignored txn: '${txn.title}' | Type='${txn.type}'")
+                        }
                     }
-                    totalHold += holder
                 }
-                isInRange
+                inRange
             } catch (e: Exception) {
-                Log.e("DashboardFragment.loadDashboardData", "Error parsing txn date for '${it.title}'", e)
+                Log.e("DashboardFragment", "Error parsing txn date for '${txn.title}'", e)
                 false
             }
         }
+
+        Log.i("DashboardFragment", "🧮 FINAL totalHold (totalSpent) = R$totalHold from ${filteredTransactions.size} filtered transactions")
+
 
         val remaining = income - totalHold
 
@@ -185,6 +215,103 @@ class DashboardFragment : Fragment() {
         binding.totalIncomeText.text = "Total Income: R%.2f".format(income)
         binding.totalExpensesText.text = "Total Expenses: R%.2f".format(totalHold)
         binding.remainingBudgetText.text = "Remaining Budget: R%.2f".format(remaining)
+
+
+
+        /// Calculate total category goals to compare spending against
+        val totalGoalAmount = allCategories.sumOf { it.goalAmount }
+        recalculateChart(totalHold, totalGoalAmount)
+
+/// Calculate total points earned (if any) by subtracting spending from goal
+        val pointsEarned = (totalGoalAmount - totalHold).coerceAtLeast(0.0)
+
+/// Check if we are on the 1st day of the next month to reward points
+        val calendarNow = Calendar.getInstance()
+        val isFirstOfNextMonth = calendarNow.get(Calendar.DAY_OF_MONTH) == 1
+        Log.d("DashboardFragment", "📊 Graph Input — totalSpent=$totalHold | totalGoalAmount=$totalGoalAmount")
+
+/// Show user how they're doing and whether they will earn points
+        val feedbackMsg = if (totalHold <= totalGoalAmount) {
+            if (isFirstOfNextMonth) {
+                "🎉 You earned %.0f points from last month!".format(pointsEarned)
+            } else {
+                "✅ You're on track to earn %.0f points by month end!".format(pointsEarned)
+            }
+        } else {
+            "⚠️ You've exceeded your category goals. Consider adjusting your budget."
+        }
+        // 🟢 Load bar colors from colors.xml using ContextCompat
+        val goalBarColor = ContextCompat.getColor(requireContext(), R.color.sageGreen)
+
+// Calculate the % of budget used
+        val spendingRatio = if (totalGoalAmount == 0.0) 0.0 else totalHold / totalGoalAmount
+
+// Determine dynamic color for "Spent" bar based on how close to goal
+        val spentBarColor = when {
+            spendingRatio <= 0.8 -> ContextCompat.getColor(requireContext(), R.color.successGreen)   // Green
+            spendingRatio <= 1.0 -> ContextCompat.getColor(requireContext(), R.color.centYellow)     // Yellow
+            else -> ContextCompat.getColor(requireContext(), R.color.errorRed)                       // Red
+        }
+
+        // Bar 0: Spent
+        val spentEntry = BarEntry(0f, totalHold.toFloat())
+        Log.d("DashboardChart", "Creating spentEntry with Y=${spentEntry.y} from totalSpent=$totalHold")
+
+        val spentDataSet = BarDataSet(listOf(spentEntry), "Spent").apply {
+            color = spentBarColor
+            valueTextSize = 14f
+            valueTextColor = ContextCompat.getColor(requireContext(), R.color.black)
+        }
+
+// Bar 1: Goal
+        val goalEntry = BarEntry(1f, totalGoalAmount.toFloat())
+        val goalDataSet = BarDataSet(listOf(goalEntry), "Goal").apply {
+            color = goalBarColor
+            valueTextSize = 14f
+            valueTextColor = ContextCompat.getColor(requireContext(), R.color.black)
+        }
+
+
+// Combine both into one BarData
+        val barData = BarData(spentDataSet, goalDataSet)
+
+
+/// Configure chart appearance
+        binding.spendingGoalBarChart.apply {
+            data = barData
+            description.isEnabled = false
+            legend.isEnabled = false
+            setScaleEnabled(false)
+            setDrawGridBackground(false)
+            animateY(800)
+            setTouchEnabled(false)
+            setDrawValueAboveBar(true)
+
+            /// X Axis: becomes the vertical axis in HorizontalBarChart
+            xAxis.apply {
+                isEnabled = true
+                setDrawGridLines(false)
+                setDrawAxisLine(false)
+                position = XAxis.XAxisPosition.BOTTOM
+                valueFormatter = IndexAxisValueFormatter(listOf("Spent", "Goal"))
+                granularity = 1f
+                textSize = 14f
+            }
+
+            /// Hide Y axes
+            axisLeft.isEnabled = false
+            axisRight.isEnabled = false
+
+            invalidate() // 🔁 Refresh
+        }
+
+        barData.notifyDataChanged() // tell BarData to refresh internal dataset
+        binding.spendingGoalBarChart.notifyDataSetChanged() // tell chart to redraw with updated data
+
+
+/// Push feedback to the TextView
+        binding.pointsFeedbackText.text = feedbackMsg
+
 
         val categorySummaries = allCategories.map { category ->
             val txns = filteredTransactions.filter { it.categoryId == category.id }
@@ -217,7 +344,87 @@ class DashboardFragment : Fragment() {
 
         binding.recentTransactionsRecyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.recentTransactionsRecyclerView.adapter = recentAdapter
+
+
     }
+    /// Refresh bar chart and message using current expense + goal data
+    fun recalculateChart(totalSpent: Double, totalGoal: Double) {
+        val context = requireContext()
+
+        // Load colors
+        val goalBarColor = ContextCompat.getColor(context, R.color.sageGreen)
+        val spendingRatio = if (totalGoal == 0.0) 0.0 else totalSpent / totalGoal
+        val spentBarColor = when {
+            spendingRatio <= 0.8 -> ContextCompat.getColor(context, R.color.successGreen)
+            spendingRatio <= 1.0 -> ContextCompat.getColor(context, R.color.centYellow)
+            else -> ContextCompat.getColor(context, R.color.errorRed)
+        }
+
+        // Create entries
+        val spentEntry = BarEntry(0f, totalSpent.toFloat())
+        val goalEntry = BarEntry(1f, totalGoal.toFloat())
+
+        // Datasets
+        val spentDataSet = BarDataSet(listOf(spentEntry), "Spent").apply {
+            color = spentBarColor
+            valueTextSize = 14f
+            valueTextColor = ContextCompat.getColor(context, R.color.black)
+        }
+
+        val goalDataSet = BarDataSet(listOf(goalEntry), "Goal").apply {
+            color = goalBarColor
+            valueTextSize = 14f
+            valueTextColor = ContextCompat.getColor(context, R.color.black)
+        }
+
+        // Combine and format bar chart
+        val barData = BarData().apply {
+            addDataSet(spentDataSet)
+            addDataSet(goalDataSet)
+            barWidth = 0.4f
+        }
+
+        binding.spendingGoalBarChart.apply {
+            data = barData
+            xAxis.apply {
+                valueFormatter = IndexAxisValueFormatter(listOf("Spent", "Goal"))
+                position = XAxis.XAxisPosition.BOTTOM
+                granularity = 1f
+                setDrawGridLines(false)
+                setDrawAxisLine(false)
+                textSize = 14f
+            }
+
+            axisLeft.isEnabled = false
+            axisRight.isEnabled = false
+
+            description.isEnabled = false
+            legend.isEnabled = false
+            animateY(800)
+            setTouchEnabled(false)
+            setDrawValueAboveBar(true)
+            setScaleEnabled(false)
+
+            notifyDataSetChanged()
+            invalidate()
+        }
+
+        // Update feedback
+        val isFirstOfNextMonth = Calendar.getInstance().get(Calendar.DAY_OF_MONTH) == 1
+        val points = (totalGoal - totalSpent).coerceAtLeast(0.0)
+        val feedback = if (totalSpent <= totalGoal) {
+            if (isFirstOfNextMonth) {
+                "🎉 You earned %.0f points from last month!".format(points)
+            } else {
+                "✅ You're on track to earn %.0f points by month end!".format(points)
+            }
+        } else {
+            "⚠️ You've exceeded your category goals. Consider adjusting your budget."
+        }
+
+        binding.pointsFeedbackText.text = feedback
+    }
+
 
 
     /// Handles top-right menu item clicks for navigation and actions.
@@ -262,7 +469,50 @@ class DashboardFragment : Fragment() {
         Log.d("DashboardFragment.onCreateOptionsMenu", "Top-right menu created")
         super.onCreateOptionsMenu(menu, inflater)
     }
+    /// Sets up spinner to filter dashboard by month
+    private fun setupDateSpinner() {
+        val spinner: Spinner = binding.dateRangeSpinner
+        val calendar = Calendar.getInstance()
+        val monthLabels = (0..11).map {
+            calendar.set(Calendar.MONTH, it)
+            SimpleDateFormat("MMMM yyyy", Locale.getDefault()).format(calendar.time)
+        }.reversed()
 
+        val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, monthLabels)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinner.adapter = adapter
+        spinner.setSelection(0)
+
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>, view: View?, position: Int, id: Long) {
+                val cal = Calendar.getInstance().apply { add(Calendar.MONTH, -position) }
+                selectedMonth = cal.get(Calendar.MONTH) + 1
+                selectedYear = cal.get(Calendar.YEAR)
+                Log.d("DashboardFragment", "Spinner selected -> Month=$selectedMonth Year=$selectedYear")
+                loadDashboardData()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>) {}
+        }
+    }
+
+    private fun showAddTransactionDialog() {
+        val transactionFragment = parentFragmentManager.findFragmentByTag("TransactionFragment")
+        if (transactionFragment is TransactionFragment) {
+            transactionFragment.showAddTransactionDialog()
+        } else {
+            Toast.makeText(requireContext(), "TransactionFragment not available", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun showAddIncomeDialog() {
+        val incomeFragment = parentFragmentManager.findFragmentByTag("IncomeFragment")
+        if (incomeFragment is IncomeFragment) {
+            incomeFragment.showAddIncomeDialog()
+        } else {
+            Toast.makeText(requireContext(), "IncomeFragment not available", Toast.LENGTH_SHORT).show()
+        }
+    }
     /// Cleans up view binding to prevent memory leaks after fragment is destroyed.
     override fun onDestroyView() {
         super.onDestroyView()

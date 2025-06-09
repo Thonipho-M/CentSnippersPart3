@@ -162,7 +162,7 @@ class IncomeFragment : Fragment() {
     }
 
     // Shows the Add/Edit Income dialog
-    private fun showAddIncomeDialog(isEdit: Boolean = false) {
+    fun showAddIncomeDialog(isEdit: Boolean = false) {
         Log.d("IncomeFragment", "showAddIncomeDialog() called | isEdit=$isEdit")
 
         val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_add_income, null)
@@ -284,7 +284,7 @@ class IncomeFragment : Fragment() {
             .setTitle("Delete Income")
             .setMessage("Are you sure you want to delete '${item.description}'?")
             .setPositiveButton("Yes") { _, _ ->
-                val success = dbHelper.deleteIncome(item.id, endNow = true)
+                val success = dbHelper.deleteIncome(item, endNow = true)
                 if (success) {
                     Toast.makeText(requireContext(), "Income deleted", Toast.LENGTH_SHORT).show()
                     Log.i("IncomeFragment", "Soft-deleted income ID=${item.id}")

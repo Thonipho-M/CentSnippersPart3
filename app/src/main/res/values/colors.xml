@@ -9,6 +9,8 @@
     <color name="ivory">#FFFFF0</color>
     <color name="softGray">#EDEDED</color>
     <color name="fog">#ECEBE9</color>
+    <color name="beigeBright">#F5EAD1</color>
+
 
     <!-- Leather Browns -->
     <color name="leatherBrown">#6D4C41</color>
@@ -16,6 +18,7 @@
     <color name="warmBrown">#8D6E63</color>
     <color name="brownHighlight">#A1887F</color>
     <color name="espresso">#4E342E</color>
+
 
     <!-- Sage Greens / Naturals -->
     <color name="sageGreen">#A5B2A1</color>

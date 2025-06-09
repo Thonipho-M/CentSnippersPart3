@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/dashboardScroll"
@@ -12,67 +12,96 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:gravity="center_horizontal">
+        android:gravity="center_horizontal"
+        android:paddingBottom="24dp">
 
-        <!-- Title -->
-        <TextView
-            android:id="@+id/dashboardTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Monthly Snapshot"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:textColor="@color/textPrimary"
-            android:layout_marginBottom="12dp" />
-
-        <!-- Logo -->
-        <ImageView
-            android:id="@+id/dashboardLogo"
-            android:layout_width="96dp"
-            android:layout_height="96dp"
-            android:layout_marginBottom="16dp"
-            android:src="@drawable/logo"
-            android:contentDescription="App Logo" />
-
-        <!-- Quick Stats -->
+        <!-- Header Section: Title + Month Selector -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_marginBottom="16dp">
+            android:gravity="center_vertical"
+            android:layout_marginBottom="8dp">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:id="@+id/dashboardTitle"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="wrap_content"
-                android:text="💰 Track income"
-                android:textSize="14sp"
-                android:textColor="@color/textPrimary"
-                android:layout_marginEnd="12dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="📉 Watch expenses"
-                android:textSize="14sp"
-                android:textColor="@color/textPrimary"
-                android:layout_marginEnd="12dp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="💡 Adjust goals"
-                android:textSize="14sp"
+                android:text="Snapshot"
+                android:textSize="22sp"
+                android:textStyle="bold"
                 android:textColor="@color/textPrimary" />
+
+            <Spinner
+                android:id="@+id/dateRangeSpinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:entries="@array/date_range_options"
+                android:spinnerMode="dropdown"
+                android:backgroundTint="@color/sageGreen" />
         </LinearLayout>
 
-        <!-- Budget Summary Card -->
+        <!-- Logo Aligned Right -->
+        <ImageView
+            android:id="@+id/dashboardLogo"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:layout_gravity="end"
+            android:layout_marginBottom="16dp"
+            android:src="@drawable/logo"
+            android:contentDescription="App Logo" />
+
+        <!-- Goal Progress Card -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp"
+            android:layout_marginBottom="16dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="12dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Spending vs Goal"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp" />
+
+                <!-- Horizontal bar chart area -->
+                <com.github.mikephil.charting.charts.HorizontalBarChart
+                    android:id="@+id/spendingGoalBarChart"
+                    android:layout_width="match_parent"
+                    android:layout_height="240dp"
+                    android:background="@android:color/white"
+                    android:padding="8dp" />
+
+                <!-- Points / Budget status -->
+                <TextView
+                    android:id="@+id/pointsFeedbackText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="You're on track to earn points!"
+                    android:textColor="@color/sageGreen"
+                    android:textStyle="bold"
+                    android:textSize="15sp"
+                    android:layout_marginTop="12dp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!--  Budget Summary -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="6dp">
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -84,10 +113,9 @@
                     android:id="@+id/totalIncomeText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Total Income: R0.00 (tap to edit)"
-                    android:textSize="18sp"
+                    android:text="Income: R0.00"
+                    android:textSize="16sp"
                     android:textStyle="bold"
-                    android:textColor="@color/black"
                     android:layout_marginBottom="4dp" />
 
                 <TextView
@@ -95,9 +123,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Expenses: R0.00"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:textStyle="bold"
-                    android:textColor="@color/black"
                     android:layout_marginBottom="4dp" />
 
                 <TextView
@@ -105,20 +132,19 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Remaining: R0.00"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:textStyle="bold"
-                    android:textColor="@color/black"
                     android:layout_marginBottom="4dp" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Top Categories Summary -->
+        <!-- 📊 Top Categories (Expandable Ready) -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="6dp">
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -130,7 +156,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Top Categories"
-                    android:textSize="18sp"
+                    android:textSize="17sp"
                     android:textStyle="bold"
                     android:layout_marginBottom="8dp" />
 
@@ -140,18 +166,17 @@
                     android:layout_height="wrap_content"
                     android:nestedScrollingEnabled="false"
                     android:overScrollMode="never"
-                    android:scrollbars="none"
-                    android:paddingBottom="8dp" />
+                    android:scrollbars="none" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- Recent Transactions Section -->
+        <!-- 🧾 Recent Transactions (Expandable Ready) -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="6dp">
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -163,7 +188,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Recent Transactions"
-                    android:textSize="18sp"
+                    android:textSize="17sp"
                     android:textStyle="bold"
                     android:layout_marginBottom="8dp" />
 
@@ -177,5 +202,33 @@
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
+        <!-- ➕ Quick Actions -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="12dp"
+            android:weightSum="2">
+
+            <Button
+                android:id="@+id/btnAddTransaction"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Add Transaction"
+                android:layout_marginEnd="8dp"
+                android:backgroundTint="@color/sageGreen"
+                android:textColor="@color/white" />
+
+            <Button
+                android:id="@+id/btnAddIncome"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="Add Income"
+                android:backgroundTint="@color/centYellow"
+                android:textColor="@color/black" />
+        </LinearLayout>
     </LinearLayout>
-</ScrollView>
+</androidx.core.widget.NestedScrollView>

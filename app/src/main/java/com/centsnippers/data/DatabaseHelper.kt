@@ -21,7 +21,7 @@ class DatabaseHelper(context: Context) :
     companion object {
         private const val TAG = "DatabaseHelper"
         private const val DATABASE_NAME = "CentSnippers.db"
-        private const val DATABASE_VERSION = 3
+        private const val DATABASE_VERSION = 4
         // ==============================================
         // USERS TABLE CONSTANTS
         // ==============================================
@@ -40,6 +40,7 @@ class DatabaseHelper(context: Context) :
         private const val COL_CATEGORY_GOAL = "goalAmount" // same as COL_CATEGORY_AMOUNT
         private const val COL_CATEGORY_MIN = "minSpend"
         private const val COL_CATEGORY_MAX = "maxSpend"
+        private const val COL_CATEGORY_COLOR = "colorHex"
 
         // ==============================================
         // TRANSACTIONS TABLE CONSTANTS
@@ -154,6 +155,11 @@ class DatabaseHelper(context: Context) :
                 Log.e(TAG, "Failed to upgrade categories table with new columns", e)
             }
         }
+        if (oldVersion < 4) {
+            db.execSQL("ALTER TABLE $TABLE_CATEGORIES ADD COLUMN $COL_CATEGORY_COLOR TEXT DEFAULT '#2196F3'")
+            Log.i(TAG, "Added colorHex column to categories table")
+        }
+
 
     }
 
@@ -247,6 +253,7 @@ class DatabaseHelper(context: Context) :
             put(COL_CATEGORY_GOAL, category.goalAmount)
             put(COL_CATEGORY_MIN, category.minSpend)
             put(COL_CATEGORY_MAX, category.maxSpend)
+            put(COL_CATEGORY_COLOR, category.colorHex)
 
         }
         val result = db.insert(TABLE_CATEGORIES, null, values)
@@ -268,7 +275,9 @@ class DatabaseHelper(context: Context) :
                     description = cursor.getString(cursor.getColumnIndexOrThrow(COL_CATEGORY_DESCRIPTION)),
                     goalAmount = cursor.getDouble(cursor.getColumnIndexOrThrow(COL_CATEGORY_GOAL)),
                     minSpend = cursor.getDoubleOrNull(COL_CATEGORY_MIN),
-                    maxSpend = cursor.getDoubleOrNull(COL_CATEGORY_MAX)
+                    maxSpend = cursor.getDoubleOrNull(COL_CATEGORY_MAX),
+                    colorHex = cursor.getString(cursor.getColumnIndexOrThrow("colorHex"))
+
 
 
                 ))
@@ -277,6 +286,18 @@ class DatabaseHelper(context: Context) :
         cursor.close()
         Log.d(TAG, "Fetched ${list.size} categories for user $userId")
         return list
+    }
+
+    //helper for bar graphs in categoryGraphTabfragment
+    fun getTotalSpentForCategory(category: CategoryItem): Double {
+        val db = readableDatabase
+        val cursor = db.rawQuery(
+            "SELECT SUM($COL_TRANSACTION_AMOUNT) FROM $TABLE_TRANSACTIONS WHERE $COL_TRANSACTION_CATEGORY_ID=?",
+            arrayOf(category.id.toString())
+        )
+        val total = if (cursor.moveToFirst()) cursor.getDouble(0) else 0.0
+        cursor.close()
+        return total
     }
 
 
@@ -329,12 +350,17 @@ class DatabaseHelper(context: Context) :
     }
 
     // Remove category by ID (admin or user action)
-    fun deleteCategory(categoryId: Int): Boolean {
+    fun deleteCategory(category: CategoryItem): Boolean {
         val db = writableDatabase
-        val result = db.delete(TABLE_CATEGORIES, "$COL_CATEGORY_ID=?", arrayOf(categoryId.toString()))
-        Log.i(TAG, "Category $categoryId deleted. Success: ${result > 0}")
+        val result = db.delete(
+            TABLE_CATEGORIES,
+            "$COL_CATEGORY_ID=?",
+            arrayOf(category.id.toString())
+        )
+        Log.i(TAG, "Deleted category '${category.title}' | ID=${category.id} | Success=${result > 0}")
         return result > 0
     }
+
     // This function gets all transactions for a user between two specific dates
     fun getTransactionsForUserByDate(userId: Int, startDate: String, endDate: String, inclusive: Boolean): List<TransactionItem> {
         val db = readableDatabase
@@ -403,6 +429,7 @@ class DatabaseHelper(context: Context) :
             put(COL_INCOME_CYCLE_START_DAY, income.cycleStartDay)
             put(COL_INCOME_START_DATE, income.startDate.toString())
             put(COL_INCOME_END_DATE, income.endDate?.toString())
+
             put(COL_INCOME_IS_ACTIVE, if (income.isActive) 1 else 0)
         }
 
@@ -485,11 +512,9 @@ class DatabaseHelper(context: Context) :
 // Purpose: Soft-deletes income by setting endDate and isActive = false
 // Used when user leaves a job or stops receiving a specific income
 // ============================================================
-    fun deleteIncome(incomeId: Int, endNow: Boolean): Boolean {
+    fun deleteIncome(income: IncomeItem, endNow: Boolean): Boolean {
         val db = writableDatabase
         val today = java.time.LocalDate.now().toString()
-
-        // If endNow = true, this month is deactivated. Else, starts from next.
         val endDate = if (endNow) today else java.time.LocalDate.now().plusDays(1).toString()
 
         val values = ContentValues().apply {
@@ -501,12 +526,13 @@ class DatabaseHelper(context: Context) :
             TABLE_INCOME,
             values,
             "$COL_INCOME_ID=?",
-            arrayOf(incomeId.toString())
+            arrayOf(income.id.toString())
         )
 
-        Log.w(TAG, "Income $incomeId | Soft-deleted | End now: $endNow | Effective end date: $endDate | Result: $result")
+        Log.w(TAG, "Income ${income.id} | Soft-deleted | EndNow=$endNow | Effective=$endDate | Result=$result")
         return result > 0
     }
+
 
     /// Updates only the categoryId of an existing transaction for a given transaction ID
     fun updateTransactionCategory(transactionId: Int, newCategoryId: Int): Boolean {
@@ -564,6 +590,7 @@ class DatabaseHelper(context: Context) :
 
         return count
     }
+//===========================
 
     // ============================================================
 // updateCategory()
@@ -579,6 +606,7 @@ class DatabaseHelper(context: Context) :
             put(COL_CATEGORY_GOAL, category.goalAmount)
             put(COL_CATEGORY_MIN, category.minSpend)
             put(COL_CATEGORY_MAX, category.maxSpend)
+            put(COL_CATEGORY_COLOR, category.colorHex)
 
         }
 
