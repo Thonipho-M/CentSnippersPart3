@@ -47,6 +47,7 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.16.0")
     kapt("com.github.bumptech.glide:compiler:4.16.0")
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0") // Bringing in MPAndroidChart so we visualize our budgets
+    implementation("com.google.android.material:material:1.12.0") // Material components
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

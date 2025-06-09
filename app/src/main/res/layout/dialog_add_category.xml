@@ -33,6 +33,14 @@
         android:hint="Min Spend (optional)"
         android:inputType="numberDecimal"
         android:layout_marginTop="8dp" />
+    <TextView
+        android:id="@+id/errorMinSpend"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/holo_red_dark"
+        android:textSize="12sp"
+        android:visibility="gone" />
+
 
     <EditText
         android:id="@+id/inputMaxSpend"
@@ -41,6 +49,13 @@
         android:hint="Max Spend (optional)"
         android:inputType="numberDecimal"
         android:layout_marginTop="8dp" />
+    <TextView
+        android:id="@+id/errorMaxSpend"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@android:color/holo_red_dark"
+        android:textSize="12sp"
+        android:visibility="gone" />
 
     <ImageView
         android:id="@+id/imageCategoryPreview"

@@ -8,88 +8,110 @@
     app:cardElevation="4dp"
     app:cardCornerRadius="12dp">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:padding="16dp">
 
         <!-- Category Title -->
         <TextView
             android:id="@+id/txtCategoryTitle"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:textStyle="bold"
             android:textSize="18sp"
-            android:textColor="@android:color/black" />
+            android:textColor="@android:color/black"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btnEditCategory"
+            app:layout_constraintHorizontal_bias="0" />
 
-        <!-- Description -->
-        <TextView
-            android:id="@+id/txtCategoryDescription"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:textColor="#666666"
-            android:layout_marginTop="4dp" />
-
-        <!-- Budget Summary -->
-        <TextView
-            android:id="@+id/txtCategoryAmounts"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Goal: R0.00"
-            android:textSize="14sp"
-            android:layout_marginTop="6dp"
-            android:textColor="@android:color/black" />
-
-        <!-- Min/Max Goals -->
-        <TextView
-            android:id="@+id/txtMinMax"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Min: R0.00 | Max: R0.00"
-            android:textSize="13sp"
-            android:textColor="@android:color/darker_gray"
-            android:layout_marginTop="2dp" />
-
-        <!-- Remaining or Overbudget -->
-        <TextView
-            android:id="@+id/txtRemainingAmount"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:layout_marginTop="2dp"
-            android:textColor="@android:color/holo_red_dark" />
-
-
-        <!-- Transactions Count -->
-        <TextView
-            android:id="@+id/txtCategoryTransactionCount"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:layout_marginTop="4dp"
-            android:textColor="@android:color/darker_gray" />
         <!-- Edit Button -->
         <ImageButton
             android:id="@+id/btnEditCategory"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Edit Income"
+            android:contentDescription="Edit"
             android:src="@android:drawable/ic_menu_edit"
-            android:padding="8dp" />
+            android:padding="8dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btnDelete" />
+
         <!-- Delete Button -->
         <ImageButton
             android:id="@+id/btnDelete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="@string/delete"
+            android:contentDescription="Delete"
             android:src="@android:drawable/ic_menu_delete"
-            android:padding="8dp" />
+            android:padding="8dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
-    </LinearLayout>
+        <!-- Description -->
+        <TextView
+            android:id="@+id/txtCategoryDescription"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="#666666"
+            android:layout_marginTop="4dp"
+            app:layout_constraintTop_toBottomOf="@id/txtCategoryTitle"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Budget Summary -->
+        <TextView
+            android:id="@+id/txtCategoryAmounts"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Goal: R0.00"
+            android:textSize="14sp"
+            android:layout_marginTop="6dp"
+            android:textColor="@android:color/black"
+            app:layout_constraintTop_toBottomOf="@id/txtCategoryDescription"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Min/Max -->
+        <TextView
+            android:id="@+id/txtMinMax"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Min: R0.00 | Max: R0.00"
+            android:textSize="13sp"
+            android:textColor="@android:color/darker_gray"
+            android:layout_marginTop="2dp"
+            app:layout_constraintTop_toBottomOf="@id/txtCategoryAmounts"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Remaining -->
+        <TextView
+            android:id="@+id/txtRemainingAmount"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:layout_marginTop="2dp"
+            android:textColor="@android:color/holo_red_dark"
+            app:layout_constraintTop_toBottomOf="@id/txtMinMax"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Transactions Count -->
+        <TextView
+            android:id="@+id/txtCategoryTransactionCount"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:layout_marginTop="4dp"
+            android:textColor="@android:color/darker_gray"
+            app:layout_constraintTop_toBottomOf="@id/txtRemainingAmount"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>
