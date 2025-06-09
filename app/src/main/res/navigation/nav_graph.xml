@@ -82,6 +82,10 @@
         android:name="com.centsnippers.fragments.IncomeFragment"
         android:label="Income"
         tools:layout="@layout/fragment_income" />
+    <fragment
+        android:id="@+id/educationFragment"
+        android:name="com.centsnippers.fragments.EducationFragment"
+        android:label="EducationFragment" />
 
 
 </navigation>

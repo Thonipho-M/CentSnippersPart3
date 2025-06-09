@@ -14,6 +14,10 @@
         android:title="Goals"/>
 
     <item
+        android:id="@+id/educationFragment"
+        android:title="Learn"/>
+
+    <item
         android:id="@+id/logoutButton"
         android:title="Logout" />
 

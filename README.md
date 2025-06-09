@@ -25,6 +25,11 @@
 - Confirmed stable UI and navigation between fragments
 - Incomplete graphs are hidden until feature completion
 
+### Education Page Setup
+- Learn page added for Users to access educational content
+- Article model and adapter setup so that user can view Articles
+- Video model and adapter setup so that user can watch Videos
+
 ---
 
 ## Application Overview
